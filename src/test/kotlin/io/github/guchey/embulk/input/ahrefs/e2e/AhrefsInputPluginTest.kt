@@ -1,8 +1,7 @@
-package e2e
+package io.github.guchey.embulk.input.ahrefs.e2e
 
 import com.google.inject.Binder
 import com.google.inject.Module
-import com.guchey.embulk.input.ahrefs.AhrefsInputPlugin
 import org.embulk.EmbulkEmbed
 import org.embulk.spi.InputPlugin
 import kotlin.test.Test

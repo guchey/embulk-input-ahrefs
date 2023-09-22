@@ -1,6 +1,6 @@
-package com.guchey.embulk.input.ahrefs
+package io.github.guchey.embulk.input.ahrefs
 
-import com.guchey.embulk.input.ahrefs.config.PluginTask
+import io.github.guchey.embulk.input.ahrefs.config.PluginTask
 import org.embulk.base.restclient.*
 import org.slf4j.LoggerFactory
 

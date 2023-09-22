@@ -5,7 +5,7 @@ plugins {
     id("com.diffplug.spotless") version "6.11.0"
 }
 
-group = "com.guchey.embulk.input.ahrefs"
+group = "io.github.guchey.embulk.input.ahrefs"
 version = "0.1.0-ALPHA"
 var embulkVersion = "0.10.31"
 
@@ -41,7 +41,7 @@ dependencies {
 }
 
 embulkPlugin {
-    mainClass.set("com.guchey.embulk.input.ahrefs.AhrefsInputPlugin")
+    mainClass.set("io.github.guchey.embulk.input.ahrefs.AhrefsInputPlugin")
     category.set("input")
     type.set("ahrefs")
 }

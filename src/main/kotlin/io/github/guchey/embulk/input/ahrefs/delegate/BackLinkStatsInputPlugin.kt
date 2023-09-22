@@ -1,4 +1,4 @@
-package com.guchey.embulk.input.ahrefs.delegate
+package io.github.guchey.embulk.input.ahrefs.delegate
 
 import com.fasterxml.jackson.databind.JsonNode
 import okhttp3.Request
@@ -28,7 +28,7 @@ class BackLinkStatsInputPlugin : AhrefsBaseDelegate() {
         val target: String
     }
 
-    override fun buildRequest(task: com.guchey.embulk.input.ahrefs.config.PluginTask): Request {
+    override fun buildRequest(task: io.github.guchey.embulk.input.ahrefs.config.PluginTask): Request {
         val queryParam = mapOf(
             "output" to "json",
             "mode" to task.mode,
@@ -45,13 +45,13 @@ class BackLinkStatsInputPlugin : AhrefsBaseDelegate() {
     }
 
     override fun transformJsonRecord(
-        task: com.guchey.embulk.input.ahrefs.config.PluginTask,
+        task: io.github.guchey.embulk.input.ahrefs.config.PluginTask,
         record: JsonNode
     ): JsonNode {
         return record.get("metrics")
     }
 
-    override fun buildServiceResponseMapper(task: com.guchey.embulk.input.ahrefs.config.PluginTask): ServiceResponseMapper<out ValueLocator> {
+    override fun buildServiceResponseMapper(task: io.github.guchey.embulk.input.ahrefs.config.PluginTask): ServiceResponseMapper<out ValueLocator> {
         val builder = JacksonServiceResponseMapper.builder()
         builder
             .add("live", Types.LONG)

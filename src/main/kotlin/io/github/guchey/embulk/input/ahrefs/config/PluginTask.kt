@@ -1,11 +1,11 @@
-package com.guchey.embulk.input.ahrefs.config
+package io.github.guchey.embulk.input.ahrefs.config
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.guchey.embulk.input.ahrefs.delegate.AhrefsBaseDelegate
-import com.guchey.embulk.input.ahrefs.delegate.BackLinkStatsInputPlugin
-import com.guchey.embulk.input.ahrefs.delegate.DomainRatingInputPlugin
-import com.guchey.embulk.input.ahrefs.delegate.RefDomainsHistoryInputPlugin
+import io.github.guchey.embulk.input.ahrefs.delegate.AhrefsBaseDelegate
+import io.github.guchey.embulk.input.ahrefs.delegate.BackLinkStatsInputPlugin
+import io.github.guchey.embulk.input.ahrefs.delegate.DomainRatingInputPlugin
+import io.github.guchey.embulk.input.ahrefs.delegate.RefDomainsHistoryInputPlugin
 import org.embulk.base.restclient.RestClientInputPluginDelegate
 import org.embulk.base.restclient.RestClientInputTaskBase
 import org.embulk.util.config.Config

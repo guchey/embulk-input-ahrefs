@@ -1,8 +1,8 @@
-package com.guchey.embulk.input.ahrefs
+package io.github.guchey.embulk.input.ahrefs
 
-import com.guchey.embulk.input.ahrefs.AhrefsInputPlugin.Companion.CONFIG_MAPPER
-import com.guchey.embulk.input.ahrefs.AhrefsInputPlugin.Companion.CONFIG_MAPPER_FACTORY
-import com.guchey.embulk.input.ahrefs.config.PluginTask
+import io.github.guchey.embulk.input.ahrefs.AhrefsInputPlugin.Companion.CONFIG_MAPPER
+import io.github.guchey.embulk.input.ahrefs.AhrefsInputPlugin.Companion.CONFIG_MAPPER_FACTORY
+import io.github.guchey.embulk.input.ahrefs.config.PluginTask
 import org.embulk.EmbulkSystemProperties
 import org.junit.Assume.assumeNotNull
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -34,26 +34,6 @@ class AhrefsInputPluginTest {
             API_KEY = apiKey
         }
     }
-
-//    @JvmField
-//    @Rule
-//    var embulk: TestingEmbulk = TestingEmbulk.builder()
-//        .setEmbulkSystemProperties<Any>(EMBULK_SYSTEM_PROPERTIES)
-//        .registerPlugin(AhrefsInputPlugin::class.java, "ahrefs", AhrefsInputPlugin::class.java)
-//        .registerPlugin(FileOutputPlugin::class.java, "file", FileOutputPlugin::class.java)
-//        .build()
-
-//    @JvmField
-//    @Rule
-//    var runtime = EmbulkTestRuntime()
-//    private var config: ConfigSource? = null
-//    private var plugin: AhrefsInputPlugin? = null
-
-//    @BeforeEach
-//    fun createResources() {
-//        val config = config("test")
-//        val plugin = AhrefsInputPlugin()
-//    }
 
     @Test
     fun checkDefaultValues() {

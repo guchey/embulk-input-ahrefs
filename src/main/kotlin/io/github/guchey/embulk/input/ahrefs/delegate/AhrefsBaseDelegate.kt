@@ -1,12 +1,12 @@
-package com.guchey.embulk.input.ahrefs.delegate
+package io.github.guchey.embulk.input.ahrefs.delegate
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
-import com.guchey.embulk.input.ahrefs.AhrefsInputPlugin
-import com.guchey.embulk.input.ahrefs.AhrefsInputPlugin.Companion.CONFIG_MAPPER_FACTORY
-import com.guchey.embulk.input.ahrefs.config.PluginTask
-import com.guchey.embulk.input.ahrefs.okhttp.RetryInterceptor
+import io.github.guchey.embulk.input.ahrefs.AhrefsInputPlugin.Companion.CONFIG_MAPPER_FACTORY
+import io.github.guchey.embulk.input.ahrefs.AhrefsInputPlugin.Companion.OBJECT_MAPPER
+import io.github.guchey.embulk.input.ahrefs.config.PluginTask
+import io.github.guchey.embulk.input.ahrefs.okhttp.RetryInterceptor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -99,7 +99,7 @@ abstract class AhrefsBaseDelegate : RestClientInputPluginDelegate<PluginTask> {
             client.newCall(request).execute().use { response ->
                 logger.debug("response code: {}", response.code)
                 val responseData = response.body?.string()
-                AhrefsInputPlugin.OBJECT_MAPPER.readTree(responseData)
+                OBJECT_MAPPER.readTree(responseData)
             }
         }
     }

@@ -1,6 +1,6 @@
-package com.guchey.embulk.input.ahrefs.okhttp
+package io.github.guchey.embulk.input.ahrefs.okhttp
 
-import com.guchey.embulk.input.ahrefs.config.PluginTask
+import io.github.guchey.embulk.input.ahrefs.config.PluginTask
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
