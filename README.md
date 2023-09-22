@@ -67,7 +67,7 @@ All target have this configuration parameters.
 |date_from|true||The start date of the historical period in YYYY-MM-DD format.|
 |target|true||The target of the search: a domain or a URL.|
 
-## Exsample
+## Example
 
 ```yml
 in:
