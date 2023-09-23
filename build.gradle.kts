@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "1.8.0"
     id("maven-publish")
+    id("jacoco")
     id("org.embulk.embulk-plugins") version "0.5.5"
     id("com.diffplug.spotless") version "6.11.0"
 }
@@ -24,7 +25,10 @@ dependencies {
         exclude(group = "com.fasterxml.jackson.datatype", module = "jackson-datatype-jdk8")
         exclude(group = "javax.validation", module = "validation-api")
     }
-    implementation("org.embulk:embulk-base-restclient:0.10.1")
+    implementation("org.embulk:embulk-base-restclient:0.10.1") {
+        exclude(group = "org.embulk", module = "embulk-core")
+    }
+
     implementation("org.embulk:embulk-util-retryhelper-jaxrs:0.8.1")
 
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
