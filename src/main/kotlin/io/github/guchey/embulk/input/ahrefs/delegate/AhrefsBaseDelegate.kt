@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import io.github.guchey.embulk.input.ahrefs.AhrefsInputPlugin.Companion.CONFIG_MAPPER_FACTORY
 import io.github.guchey.embulk.input.ahrefs.AhrefsInputPlugin.Companion.OBJECT_MAPPER
-import io.github.guchey.embulk.input.ahrefs.config.PluginTask
+import io.github.guchey.embulk.input.ahrefs.AhrefsInputPluginDelegate
 import io.github.guchey.embulk.input.ahrefs.okhttp.RetryInterceptor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -28,33 +28,32 @@ import org.slf4j.LoggerFactory
 import java.util.*
 
 
-abstract class AhrefsBaseDelegate : RestClientInputPluginDelegate<PluginTask> {
+abstract class AhrefsBaseDelegate<T : AhrefsInputPluginDelegate.PluginTask> : RestClientInputPluginDelegate<T> {
 
     private val logger = LoggerFactory.getLogger(javaClass)
     private val PREVIEW_RECORD_LIMIT = 15
 
     override fun buildConfigDiff(
-        task: PluginTask, schema: Schema, taskCount: Int, taskReports: MutableList<TaskReport>
+        task: T, schema: Schema, taskCount: Int, taskReports: MutableList<TaskReport>
     ): ConfigDiff {
         taskReports.forEach { report -> logger.info(report.toString()) }
         return CONFIG_MAPPER_FACTORY.newConfigDiff();
     }
 
-    override fun validateInputTask(task: PluginTask) {
-        logger.debug("validateInputTask")
+    override fun validateInputTask(task: T) {
         task.validate()
     }
 
-    override fun buildServiceDataSplitter(task: PluginTask): ServiceDataSplitter<PluginTask> {
+    override fun buildServiceDataSplitter(task: T): ServiceDataSplitter<T> {
         return DefaultServiceDataSplitter();
     }
 
-    override fun buildServiceResponseMapper(task: PluginTask): ServiceResponseMapper<out ValueLocator> {
+    override fun buildServiceResponseMapper(task: T): ServiceResponseMapper<out ValueLocator> {
         return JacksonServiceResponseMapper.builder().build();
     }
 
     override fun ingestServiceData(
-        task: PluginTask, recordImporter: RecordImporter, taskIndex: Int, pageBuilder: PageBuilder
+        task: T, recordImporter: RecordImporter, taskIndex: Int, pageBuilder: PageBuilder
     ): TaskReport = runBlocking {
         if (Exec.isPreview()) {
             task.limit = Optional.of(PREVIEW_RECORD_LIMIT)
@@ -81,7 +80,7 @@ abstract class AhrefsBaseDelegate : RestClientInputPluginDelegate<PluginTask> {
      *
      * This method creates a request for the Ahrefs API, setting the necessary parameters and headers.
      */
-    abstract fun buildRequest(task: PluginTask): okhttp3.Request
+    abstract fun buildRequest(task: T): okhttp3.Request
 
     /**
      * Transforms a JSON record by extracting the "metrics" node.
@@ -90,9 +89,9 @@ abstract class AhrefsBaseDelegate : RestClientInputPluginDelegate<PluginTask> {
      * @param record a {@code JsonNode} object that represents the JSON record to be transformed
      * @return a {@code JsonNode} object representing the node to which the original node was transformed.
      */
-    abstract fun transformJsonRecord(task: PluginTask, record: JsonNode): JsonNode
+    abstract fun transformJsonRecord(task: T, record: JsonNode): JsonNode
 
-    private suspend fun fetch(client: OkHttpClient, task: PluginTask): JsonNode {
+    private suspend fun fetch(client: OkHttpClient, task: T): JsonNode {
         val request = buildRequest(task)
         return withContext(Dispatchers.IO) {
             logger.info("try to fetch {}", request.url)
@@ -105,7 +104,7 @@ abstract class AhrefsBaseDelegate : RestClientInputPluginDelegate<PluginTask> {
     }
 
     private fun ingestTransformedJsonRecord(
-        task: PluginTask, recordImporter: RecordImporter, pageBuilder: PageBuilder, transformedJsonRecord: JsonNode
+        task: T, recordImporter: RecordImporter, pageBuilder: PageBuilder, transformedJsonRecord: JsonNode
     ) {
         if (transformedJsonRecord.isArray) {
             for (record in transformedJsonRecord as ArrayNode) {
@@ -118,7 +117,7 @@ abstract class AhrefsBaseDelegate : RestClientInputPluginDelegate<PluginTask> {
         }
     }
 
-    private fun paginationRequired(task: PluginTask, response: JsonNode): Boolean {
+    private fun paginationRequired(task: AhrefsInputPluginDelegate.PluginTask, response: JsonNode): Boolean {
         return false
     }
 }
