@@ -1,6 +1,6 @@
 package io.github.guchey.embulk.input.ahrefs.okhttp
 
-import io.github.guchey.embulk.input.ahrefs.config.PluginTask
+import io.github.guchey.embulk.input.ahrefs.AhrefsInputPluginDelegate
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
@@ -8,7 +8,7 @@ import okhttp3.Response
 import org.slf4j.LoggerFactory
 import kotlin.math.pow
 
-class RetryInterceptor(private val task: PluginTask) : Interceptor {
+class RetryInterceptor(private val task: AhrefsInputPluginDelegate.PluginTask) : Interceptor {
     private val logger = LoggerFactory.getLogger(RetryInterceptor::class.java)
 
     override fun intercept(chain: Interceptor.Chain): Response = runBlocking {

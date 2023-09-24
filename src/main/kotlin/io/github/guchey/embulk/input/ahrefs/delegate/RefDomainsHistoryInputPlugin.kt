@@ -1,6 +1,7 @@
 package io.github.guchey.embulk.input.ahrefs.delegate
 
 import com.fasterxml.jackson.databind.JsonNode
+import io.github.guchey.embulk.input.ahrefs.AhrefsInputPluginDelegate
 import okhttp3.Request
 import org.embulk.base.restclient.ServiceResponseMapper
 import org.embulk.base.restclient.jackson.JacksonServiceResponseMapper
@@ -8,13 +9,14 @@ import org.embulk.base.restclient.record.ValueLocator
 import org.embulk.spi.type.Types
 import org.embulk.util.config.Config
 import org.embulk.util.config.ConfigDefault
-import org.embulk.util.config.Task
+import java.util.*
 
 
-class RefDomainsHistoryInputPlugin : AhrefsBaseDelegate() {
-    interface PluginTask : Task {
+class RefDomainsHistoryInputPlugin : AhrefsBaseDelegate<AhrefsInputPluginDelegate.PluginTask>() {
+    interface PluginTask {
+        @get:ConfigDefault("null")
         @get:Config("date_to")
-        val dateTo: String
+        val dateTo: Optional<String>
 
         @get:ConfigDefault("\"monthly\"")
         @get:Config("history_grouping")
@@ -28,14 +30,16 @@ class RefDomainsHistoryInputPlugin : AhrefsBaseDelegate() {
         @get:Config("protocol")
         val protocol: String
 
+        @get:ConfigDefault("null")
         @get:Config("date_from")
-        val dateFrom: String
+        val dateFrom: Optional<String>
 
+        @get:ConfigDefault("null")
         @get:Config("target")
-        val target: String
+        val target: Optional<String>
     }
 
-    override fun buildRequest(task: io.github.guchey.embulk.input.ahrefs.config.PluginTask): Request {
+    override fun buildRequest(task: AhrefsInputPluginDelegate.PluginTask): Request {
         val queryParam = mapOf(
             "output" to "json",
             "date_to" to task.dateTo,
@@ -54,13 +58,13 @@ class RefDomainsHistoryInputPlugin : AhrefsBaseDelegate() {
     }
 
     override fun transformJsonRecord(
-        task: io.github.guchey.embulk.input.ahrefs.config.PluginTask,
+        task: AhrefsInputPluginDelegate.PluginTask,
         record: JsonNode
     ): JsonNode {
         return record.get("refdomains")
     }
 
-    override fun buildServiceResponseMapper(task: io.github.guchey.embulk.input.ahrefs.config.PluginTask): ServiceResponseMapper<out ValueLocator> {
+    override fun buildServiceResponseMapper(task: AhrefsInputPluginDelegate.PluginTask): ServiceResponseMapper<out ValueLocator> {
         val builder = JacksonServiceResponseMapper.builder()
         builder
             .add("date", Types.STRING)

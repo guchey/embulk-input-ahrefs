@@ -1,6 +1,7 @@
 package io.github.guchey.embulk.input.ahrefs.delegate
 
 import com.fasterxml.jackson.databind.JsonNode
+import io.github.guchey.embulk.input.ahrefs.AhrefsInputPluginDelegate
 import okhttp3.Request
 import org.embulk.base.restclient.ServiceResponseMapper
 import org.embulk.base.restclient.jackson.JacksonServiceResponseMapper
@@ -8,11 +9,11 @@ import org.embulk.base.restclient.record.ValueLocator
 import org.embulk.spi.type.Types
 import org.embulk.util.config.Config
 import org.embulk.util.config.ConfigDefault
-import org.embulk.util.config.Task
+import java.util.*
 
 
-class BackLinkStatsInputPlugin : AhrefsBaseDelegate() {
-    interface PluginTask : Task {
+class BackLinkStatsInputPlugin : AhrefsBaseDelegate<AhrefsInputPluginDelegate.PluginTask>() {
+    interface PluginTask {
         @get:ConfigDefault("\"subdomains\"")
         @get:Config("mode")
         val mode: String
@@ -21,14 +22,16 @@ class BackLinkStatsInputPlugin : AhrefsBaseDelegate() {
         @get:Config("protocol")
         val protocol: String
 
+        @get:ConfigDefault("null")
         @get:Config("date")
-        val date: String
+        val date: Optional<String>
 
+        @get:ConfigDefault("null")
         @get:Config("target")
-        val target: String
+        val target: Optional<String>
     }
 
-    override fun buildRequest(task: io.github.guchey.embulk.input.ahrefs.config.PluginTask): Request {
+    override fun buildRequest(task: AhrefsInputPluginDelegate.PluginTask): Request {
         val queryParam = mapOf(
             "output" to "json",
             "mode" to task.mode,
@@ -45,13 +48,13 @@ class BackLinkStatsInputPlugin : AhrefsBaseDelegate() {
     }
 
     override fun transformJsonRecord(
-        task: io.github.guchey.embulk.input.ahrefs.config.PluginTask,
+        task: AhrefsInputPluginDelegate.PluginTask,
         record: JsonNode
     ): JsonNode {
         return record.get("metrics")
     }
 
-    override fun buildServiceResponseMapper(task: io.github.guchey.embulk.input.ahrefs.config.PluginTask): ServiceResponseMapper<out ValueLocator> {
+    override fun buildServiceResponseMapper(task: AhrefsInputPluginDelegate.PluginTask): ServiceResponseMapper<out ValueLocator> {
         val builder = JacksonServiceResponseMapper.builder()
         builder
             .add("live", Types.LONG)
