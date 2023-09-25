@@ -1,7 +1,7 @@
-package io.github.guchey.embulk.input.ahrefs.delegate
+package io.github.guchey.embulk.input.ahrefs.delegate.siteexplorer
 
 import com.fasterxml.jackson.databind.JsonNode
-import io.github.guchey.embulk.input.ahrefs.AhrefsInputPluginDelegate
+import io.github.guchey.embulk.input.ahrefs.delegate.AhrefsBaseDelegate
 import okhttp3.Request
 import org.embulk.base.restclient.ServiceResponseMapper
 import org.embulk.base.restclient.jackson.JacksonServiceResponseMapper
@@ -12,8 +12,8 @@ import org.embulk.util.config.ConfigDefault
 import java.util.*
 
 
-class RefDomainsHistoryInputPlugin : AhrefsBaseDelegate<AhrefsInputPluginDelegate.PluginTask>() {
-    interface PluginTask {
+class RefDomainsHistoryInputPlugin : AhrefsBaseDelegate<RefDomainsHistoryInputPlugin.PluginTask>() {
+    interface PluginTask : AhrefsBaseDelegate.PluginTask {
         @get:ConfigDefault("null")
         @get:Config("date_to")
         val dateTo: Optional<String>
@@ -39,7 +39,7 @@ class RefDomainsHistoryInputPlugin : AhrefsBaseDelegate<AhrefsInputPluginDelegat
         val target: Optional<String>
     }
 
-    override fun buildRequest(task: AhrefsInputPluginDelegate.PluginTask): Request {
+    override fun buildRequest(task: PluginTask): Request {
         val queryParam = mapOf(
             "output" to "json",
             "date_to" to task.dateTo,
@@ -58,13 +58,13 @@ class RefDomainsHistoryInputPlugin : AhrefsBaseDelegate<AhrefsInputPluginDelegat
     }
 
     override fun transformJsonRecord(
-        task: AhrefsInputPluginDelegate.PluginTask,
+        task: PluginTask,
         record: JsonNode
     ): JsonNode {
         return record.get("refdomains")
     }
 
-    override fun buildServiceResponseMapper(task: AhrefsInputPluginDelegate.PluginTask): ServiceResponseMapper<out ValueLocator> {
+    override fun buildServiceResponseMapper(task: PluginTask): ServiceResponseMapper<out ValueLocator> {
         val builder = JacksonServiceResponseMapper.builder()
         builder
             .add("date", Types.STRING)
