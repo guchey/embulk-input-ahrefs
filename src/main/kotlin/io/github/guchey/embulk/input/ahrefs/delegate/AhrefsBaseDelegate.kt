@@ -24,11 +24,72 @@ import org.embulk.config.TaskReport
 import org.embulk.spi.Exec
 import org.embulk.spi.PageBuilder
 import org.embulk.spi.Schema
+import org.embulk.util.config.Config
+import org.embulk.util.config.ConfigDefault
+import org.embulk.util.config.Task
 import org.slf4j.LoggerFactory
 import java.util.*
 
 
-abstract class AhrefsBaseDelegate<T : AhrefsInputPluginDelegate.PluginTask> : RestClientInputPluginDelegate<T> {
+abstract class AhrefsBaseDelegate<T : AhrefsBaseDelegate.PluginTask> : RestClientInputPluginDelegate<T> {
+    interface PluginTask : AhrefsInputPluginDelegate.PluginTask {
+
+        @get:Config("api_key")
+        val apiKey: String
+
+        @get:ConfigDefault("null")
+        @get:Config("limit")
+        var limit: Optional<Int>
+
+        interface PagerOption : Task {
+            @get:ConfigDefault("[]")
+            @get:Config("initial_params")
+            val initialParams: List<Map<String?, Any?>?>?
+
+            @get:ConfigDefault("[]")
+            @get:Config("next_params")
+            val nextParams: List<Map<String?, Any?>?>?
+
+            @get:ConfigDefault("\".request_body\"")
+            @get:Config("next_body_transformer")
+            val nextBodyTransformer: String
+
+            @get:ConfigDefault("\"false\"")
+            @get:Config("while")
+            val `while`: String
+
+            @get:ConfigDefault("100")
+            @get:Config("interval_millis")
+            val intervalMillis: Long
+        }
+
+
+        @get:Config("pager")
+        @get:ConfigDefault("{}")
+        val pager: PagerOption
+
+        interface RetryOption : Task {
+            @get:ConfigDefault("\"true\"")
+            @get:Config("condition")
+            val condition: String
+
+            @get:ConfigDefault("7")
+            @get:Config("max_retries")
+            val maxRetries: Int
+
+            @get:ConfigDefault("1000")
+            @get:Config("initial_interval_millis")
+            val initialIntervalMillis: Int
+
+            @get:ConfigDefault("60000")
+            @get:Config("max_interval_millis")
+            val maxIntervalMillis: Int
+        }
+
+        @get:ConfigDefault("{}")
+        @get:Config("retry")
+        val retry: RetryOption
+    }
 
     private val logger = LoggerFactory.getLogger(javaClass)
     private val PREVIEW_RECORD_LIMIT = 15
@@ -117,7 +178,7 @@ abstract class AhrefsBaseDelegate<T : AhrefsInputPluginDelegate.PluginTask> : Re
         }
     }
 
-    private fun paginationRequired(task: AhrefsInputPluginDelegate.PluginTask, response: JsonNode): Boolean {
+    private fun paginationRequired(task: PluginTask, response: JsonNode): Boolean {
         return false
     }
 }
