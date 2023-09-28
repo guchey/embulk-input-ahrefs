@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "io.github.guchey.embulk.input.ahrefs"
-version = "0.1.0-SNAPSHOT"
+version = "0.1.1-SNAPSHOT"
 description = "embulk-input-ahrefs is the gem preparing Embulk input plugins"
 var embulkVersion = "0.10.31"
 
@@ -137,4 +137,13 @@ kotlin {
 signing {
     useGpgCmd()
     sign(publishing.publications["maven"])
+}
+
+tasks.register("generateEmbulkProperties") {
+    doLast {
+        val embulkDir = file(".embulk")
+        embulkDir.mkdirs()
+        val propFile = file(".embulk/embulk.properties")
+        propFile.writeText("m2_repo=${System.getProperty("user.home")}/.m2/repository\nplugins.input.ahrefs=maven:${project.group}:ahrefs:${project.version}")
+    }
 }
