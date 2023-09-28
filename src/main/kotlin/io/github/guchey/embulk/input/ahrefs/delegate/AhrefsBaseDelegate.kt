@@ -16,14 +16,15 @@ import org.embulk.base.restclient.jackson.JacksonServiceResponseMapper
 import org.embulk.base.restclient.record.RecordImporter
 import org.embulk.base.restclient.record.ValueLocator
 import org.embulk.config.ConfigDiff
+import org.embulk.config.ConfigException
 import org.embulk.config.TaskReport
-import org.embulk.spi.Exec
 import org.embulk.spi.PageBuilder
 import org.embulk.spi.Schema
 import org.embulk.util.config.Config
 import org.embulk.util.config.ConfigDefault
 import org.embulk.util.config.Task
 import org.slf4j.LoggerFactory
+import java.util.*
 
 
 abstract class AhrefsBaseDelegate<T : AhrefsBaseDelegate.PluginTask> : RestClientInputPluginDelegate<T> {
@@ -31,33 +32,6 @@ abstract class AhrefsBaseDelegate<T : AhrefsBaseDelegate.PluginTask> : RestClien
 
         @get:Config("api_key")
         val apiKey: String
-
-//        interface PagerOption : Task {
-//            @get:ConfigDefault("[]")
-//            @get:Config("initial_params")
-//            val initialParams: List<Map<String?, Any?>?>?
-//
-//            @get:ConfigDefault("[]")
-//            @get:Config("next_params")
-//            val nextParams: List<Map<String?, Any?>?>?
-//
-//            @get:ConfigDefault("\".request_body\"")
-//            @get:Config("next_body_transformer")
-//            val nextBodyTransformer: String
-//
-//            @get:ConfigDefault("\"false\"")
-//            @get:Config("while")
-//            val `while`: String
-//
-//            @get:ConfigDefault("100")
-//            @get:Config("interval_millis")
-//            val intervalMillis: Long
-//        }
-//
-//
-//        @get:Config("pager")
-//        @get:ConfigDefault("{}")
-//        val pager: PagerOption
 
         interface RetryOption : Task {
             @get:ConfigDefault("\"true\"")
@@ -83,7 +57,6 @@ abstract class AhrefsBaseDelegate<T : AhrefsBaseDelegate.PluginTask> : RestClien
     }
 
     private val logger = LoggerFactory.getLogger(javaClass)
-    private val PREVIEW_RECORD_LIMIT = 15
 
     override fun buildConfigDiff(
         task: T, schema: Schema, taskCount: Int, taskReports: MutableList<TaskReport>
@@ -107,19 +80,11 @@ abstract class AhrefsBaseDelegate<T : AhrefsBaseDelegate.PluginTask> : RestClien
     override fun ingestServiceData(
         task: T, recordImporter: RecordImporter, taskIndex: Int, pageBuilder: PageBuilder
     ): TaskReport = runBlocking {
-//        if (Exec.isPreview()) {
-//            task.limit = Optional.of(PREVIEW_RECORD_LIMIT)
-//        }
         val retryInterceptor = RetryInterceptor(task)
         val client = OkHttpClient.Builder().addInterceptor(retryInterceptor).build()
         val response = fetch(client, task)
         logger.debug("response: {}", response)
         ingestTransformedJsonRecord(task, recordImporter, pageBuilder, transformJsonRecord(task, response))
-        var imported = 0
-        while (paginationRequired(task, response) && (imported < PREVIEW_RECORD_LIMIT || !Exec.isPreview())) {
-            ingestTransformedJsonRecord(task, recordImporter, pageBuilder, transformJsonRecord(task, response))
-            imported++
-        }
         return@runBlocking CONFIG_MAPPER_FACTORY.newTaskReport()
     }
 
@@ -175,7 +140,10 @@ abstract class AhrefsBaseDelegate<T : AhrefsBaseDelegate.PluginTask> : RestClien
         }
     }
 
-    private fun paginationRequired(task: PluginTask, response: JsonNode): Boolean {
-        return false
+    fun <T> validateAndResolveFiled(field: Optional<T>, fieldName: String): T {
+        if (!field.isPresent) {
+            throw ConfigException("Field '${fieldName}' is required but not set");
+        }
+        return field.get()
     }
 }

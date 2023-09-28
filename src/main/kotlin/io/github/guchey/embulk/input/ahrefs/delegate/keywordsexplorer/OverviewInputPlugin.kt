@@ -8,6 +8,7 @@ import okhttp3.Request
 import org.embulk.base.restclient.ServiceResponseMapper
 import org.embulk.base.restclient.jackson.JacksonServiceResponseMapper
 import org.embulk.base.restclient.record.ValueLocator
+import org.embulk.config.ConfigException
 import org.embulk.spi.type.Type
 import org.embulk.spi.type.Types
 import org.embulk.util.config.Config
@@ -81,9 +82,11 @@ class OverviewInputPlugin<T : OverviewInputPlugin.PluginTask> : AhrefsBaseDelega
     }
 
     override fun validateInputTask(task: T) {
-        require(task.country.isPresent)
-        require(task.select.isPresent)
-        require(task.keywordListId.isPresent || task.keywords.isPresent)
+        validateAndResolveFiled(task.country, "country")
+        validateAndResolveFiled(task.select, "select")
+        if (!task.keywordListId.isPresent && !task.keywords.isPresent) {
+            throw ConfigException("Either Field 'keywordListId' or Field 'keywords' is required but not set");
+        }
         super.validateInputTask(task)
     }
 
