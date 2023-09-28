@@ -2,7 +2,7 @@ plugins {
     kotlin("jvm") version "1.8.0"
     id("maven-publish")
     id("jacoco")
-    id("org.embulk.embulk-plugins") version "0.5.5"
+    id("org.embulk.embulk-plugins") version "0.6.1"
     id("com.diffplug.spotless") version "6.11.0"
     signing
 }
