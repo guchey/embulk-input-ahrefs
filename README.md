@@ -20,11 +20,19 @@ Required Embulk version >= 0.11.0.
 
 ## Install
 
-embulk.properties
+Use maven-dependency-plugin to get the plugin.
+
+```
+mvn org.apache.maven.plugins:maven-dependency-plugin:3.1.2:get -Dartifact=io.github.guchey.embulk.input.ahrefs:embulk-input-ahrefs:0.1.0-ALPHA
+```
+
+Specify plugin in embulk.properties.
 
 ```
 plugins.input.ahrefs=maven:io.github.guchey.embulk.input.ahrefs:ahrefs:0.1.0-SNAPSHOT
 ```
+
+
 
 ## Configuration
 
