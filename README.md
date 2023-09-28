@@ -23,7 +23,7 @@ Required Embulk version >= 0.11.0.
 embulk.properties
 
 ```
-plugins.input.ahrefs=maven:io.github.guchey.embulk.input.ahrefs:ahrefs:0.1.0-ALPHA
+plugins.input.ahrefs=maven:io.github.guchey.embulk.input.ahrefs:ahrefs:0.1.1-ALPHA
 ```
 
 ## Configuration
