@@ -45,8 +45,8 @@ class MetricsInputPlugin<T : MetricsInputPlugin.PluginTask> : AhrefsBaseDelegate
     }
 
     override fun validateInputTask(task: T) {
-        require(task.date.isPresent)
-        require(task.target.isPresent)
+        validateAndResolveFiled(task.date, "date")
+        validateAndResolveFiled(task.target, "target")
         super.validateInputTask(task)
     }
 

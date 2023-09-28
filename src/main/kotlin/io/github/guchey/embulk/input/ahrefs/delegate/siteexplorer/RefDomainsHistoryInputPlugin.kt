@@ -44,8 +44,8 @@ class RefDomainsHistoryInputPlugin<T : RefDomainsHistoryInputPlugin.PluginTask> 
     }
 
     override fun validateInputTask(task: T) {
-        require(task.dateFrom.isPresent)
-        require(task.target.isPresent)
+        validateAndResolveFiled(task.dateFrom, "date_from")
+        validateAndResolveFiled(task.target, "target")
         super.validateInputTask(task)
     }
 
