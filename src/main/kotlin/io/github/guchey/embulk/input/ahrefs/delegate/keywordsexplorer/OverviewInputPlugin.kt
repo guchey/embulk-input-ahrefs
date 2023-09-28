@@ -124,7 +124,7 @@ class OverviewInputPlugin<T : OverviewInputPlugin.PluginTask> : AhrefsBaseDelega
         return builder.build()
     }
 
-    fun lookupField(select: String): List<Pair<String, Type>> {
+    private fun lookupField(select: String): List<Pair<String, Type>> {
         return select.split(",").map {
             it to COLUMNS[it]
         }.filterNot { it.second == null }.map { it.first to it.second!! }
