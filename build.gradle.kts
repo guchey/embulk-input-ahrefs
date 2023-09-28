@@ -139,8 +139,6 @@ signing {
     sign(publishing.publications["maven"])
 }
 
-extra["isNotCI"] = !System.getenv("CI").isNullOrEmpty()
-
 tasks.register("generateEmbulkProperties") {
     doLast {
         val embulkDir = file(".embulk")
@@ -151,5 +149,5 @@ tasks.register("generateEmbulkProperties") {
 }
 
 tasks.withType<Sign>().configureEach {
-    onlyIf { System.getenv("SKIP_SIGNING") == null }
+    onlyIf { !gradle.taskGraph.hasTask("publishToMavenLocal") }
 }
