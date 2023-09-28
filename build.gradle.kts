@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "io.github.guchey.embulk.input.ahrefs"
-version = "0.1.1-ALPHA"
+version = "0.1.0-SNAPSHOT"
 description = "embulk-input-ahrefs is the gem preparing Embulk input plugins"
 var embulkVersion = "0.10.31"
 
