@@ -2,8 +2,10 @@ package io.github.guchey.embulk.input.ahrefs
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonIgnore
+import io.github.guchey.embulk.input.ahrefs.delegate.keywordsexplorer.OverviewInputPlugin
 import io.github.guchey.embulk.input.ahrefs.delegate.siteexplorer.BackLinkStatsInputPlugin
 import io.github.guchey.embulk.input.ahrefs.delegate.siteexplorer.DomainRatingInputPlugin
+import io.github.guchey.embulk.input.ahrefs.delegate.siteexplorer.MetricsInputPlugin
 import io.github.guchey.embulk.input.ahrefs.delegate.siteexplorer.RefDomainsHistoryInputPlugin
 import org.embulk.base.restclient.DispatchingRestClientInputPluginDelegate
 import org.embulk.base.restclient.RestClientInputPluginDelegate
@@ -20,9 +22,11 @@ class AhrefsInputPluginDelegate : DispatchingRestClientInputPluginDelegate<Ahref
         val resource: Resource
 
         enum class Resource(private val restClientInputPluginDelegate: RestClientInputPluginDelegate<*>) {
-            DOMAIN_RATING(DomainRatingInputPlugin()),
-            BACKLINK_STATS(BackLinkStatsInputPlugin()),
-            REF_DOMAINS_HISTORY(RefDomainsHistoryInputPlugin());
+            SITE_EXPLORER_DOMAIN_RATING(DomainRatingInputPlugin()),
+            SITE_EXPLORER_BACKLINK_STATS(BackLinkStatsInputPlugin()),
+            SITE_EXPLORER_METRICS(MetricsInputPlugin()),
+            SITE_EXPLORER_REF_DOMAINS_HISTORY(RefDomainsHistoryInputPlugin()),
+            KEYWORD_EXPLORER_OVERVIEW(OverviewInputPlugin());
 
             companion object {
                 @JvmStatic

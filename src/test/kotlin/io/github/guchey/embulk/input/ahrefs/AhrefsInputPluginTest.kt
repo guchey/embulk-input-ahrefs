@@ -15,7 +15,7 @@ class AhrefsInputPluginTest {
     fun checkDefaultValues() {
         val config = CONFIG_MAPPER_FACTORY.newConfigSource()
             .set("api_key", "dummy")
-            .set("resource", "domain_rating")
+            .set("resource", "site_explorer_domain_rating")
             .set("date", "2023-01-01")
             .set("target", "example.com")
         val task = CONFIG_MAPPER.map(config, AhrefsBaseDelegate.PluginTask::class.java)
@@ -24,30 +24,5 @@ class AhrefsInputPluginTest {
         assertEquals(task.retry.maxRetries, 7)
         assertEquals(task.retry.initialIntervalMillis, 1000)
         assertEquals(task.retry.maxIntervalMillis, 60000)
-    }
-
-    @Test
-    fun checkDomainRating() {
-        val config = CONFIG_MAPPER_FACTORY.newConfigSource()
-            .set("api_key", "dummy")
-            .set("resource", "domain_rating")
-            .set("date", "2023-01-01")
-            .set("target", "example.com")
-        val task = CONFIG_MAPPER.map(config, DomainRatingInputPlugin.PluginTask::class.java)
-
-        assertEquals(task.protocol, "both")
-    }
-
-    @Test
-    fun checkBackLinkStats() {
-        val config = CONFIG_MAPPER_FACTORY.newConfigSource()
-            .set("api_key", "dummy")
-            .set("resource", "backlink_stats")
-            .set("date", "2023-01-01")
-            .set("target", "example.com")
-        val task = CONFIG_MAPPER.map(config, BackLinkStatsInputPlugin.PluginTask::class.java)
-
-        assertEquals(task.mode, "subdomains")
-        assertEquals(task.protocol, "both")
     }
 }

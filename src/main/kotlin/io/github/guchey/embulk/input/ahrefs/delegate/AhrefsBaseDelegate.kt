@@ -28,7 +28,6 @@ import org.embulk.util.config.Config
 import org.embulk.util.config.ConfigDefault
 import org.embulk.util.config.Task
 import org.slf4j.LoggerFactory
-import java.util.*
 
 
 abstract class AhrefsBaseDelegate<T : AhrefsBaseDelegate.PluginTask> : RestClientInputPluginDelegate<T> {
@@ -37,36 +36,32 @@ abstract class AhrefsBaseDelegate<T : AhrefsBaseDelegate.PluginTask> : RestClien
         @get:Config("api_key")
         val apiKey: String
 
-        @get:ConfigDefault("null")
-        @get:Config("limit")
-        var limit: Optional<Int>
-
-        interface PagerOption : Task {
-            @get:ConfigDefault("[]")
-            @get:Config("initial_params")
-            val initialParams: List<Map<String?, Any?>?>?
-
-            @get:ConfigDefault("[]")
-            @get:Config("next_params")
-            val nextParams: List<Map<String?, Any?>?>?
-
-            @get:ConfigDefault("\".request_body\"")
-            @get:Config("next_body_transformer")
-            val nextBodyTransformer: String
-
-            @get:ConfigDefault("\"false\"")
-            @get:Config("while")
-            val `while`: String
-
-            @get:ConfigDefault("100")
-            @get:Config("interval_millis")
-            val intervalMillis: Long
-        }
-
-
-        @get:Config("pager")
-        @get:ConfigDefault("{}")
-        val pager: PagerOption
+//        interface PagerOption : Task {
+//            @get:ConfigDefault("[]")
+//            @get:Config("initial_params")
+//            val initialParams: List<Map<String?, Any?>?>?
+//
+//            @get:ConfigDefault("[]")
+//            @get:Config("next_params")
+//            val nextParams: List<Map<String?, Any?>?>?
+//
+//            @get:ConfigDefault("\".request_body\"")
+//            @get:Config("next_body_transformer")
+//            val nextBodyTransformer: String
+//
+//            @get:ConfigDefault("\"false\"")
+//            @get:Config("while")
+//            val `while`: String
+//
+//            @get:ConfigDefault("100")
+//            @get:Config("interval_millis")
+//            val intervalMillis: Long
+//        }
+//
+//
+//        @get:Config("pager")
+//        @get:ConfigDefault("{}")
+//        val pager: PagerOption
 
         interface RetryOption : Task {
             @get:ConfigDefault("\"true\"")
@@ -116,9 +111,9 @@ abstract class AhrefsBaseDelegate<T : AhrefsBaseDelegate.PluginTask> : RestClien
     override fun ingestServiceData(
         task: T, recordImporter: RecordImporter, taskIndex: Int, pageBuilder: PageBuilder
     ): TaskReport = runBlocking {
-        if (Exec.isPreview()) {
-            task.limit = Optional.of(PREVIEW_RECORD_LIMIT)
-        }
+//        if (Exec.isPreview()) {
+//            task.limit = Optional.of(PREVIEW_RECORD_LIMIT)
+//        }
         val retryInterceptor = RetryInterceptor(task)
         val client = OkHttpClient.Builder().addInterceptor(retryInterceptor).build()
         val response = fetch(client, task)
@@ -130,6 +125,12 @@ abstract class AhrefsBaseDelegate<T : AhrefsBaseDelegate.PluginTask> : RestClien
             imported++
         }
         return@runBlocking CONFIG_MAPPER_FACTORY.newTaskReport()
+    }
+
+    fun buildUrl(url: String, queryParam: Map<String, String?>): String {
+        val query =
+            queryParam.entries.filterNot { it.value.isNullOrEmpty() }.joinToString("&") { "${it.key}=${it.value}" }
+        return "${url}?${query}"
     }
 
 
