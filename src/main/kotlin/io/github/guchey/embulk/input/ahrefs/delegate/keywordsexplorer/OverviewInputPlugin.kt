@@ -2,65 +2,131 @@ package io.github.guchey.embulk.input.ahrefs.delegate.keywordsexplorer
 
 import com.fasterxml.jackson.databind.JsonNode
 import io.github.guchey.embulk.input.ahrefs.delegate.AhrefsBaseDelegate
+import io.github.guchey.embulk.input.ahrefs.delegate.schema.Country
+import io.github.guchey.embulk.input.ahrefs.delegate.schema.SearchEngine
 import okhttp3.Request
 import org.embulk.base.restclient.ServiceResponseMapper
 import org.embulk.base.restclient.jackson.JacksonServiceResponseMapper
 import org.embulk.base.restclient.record.ValueLocator
+import org.embulk.spi.type.Type
 import org.embulk.spi.type.Types
 import org.embulk.util.config.Config
 import org.embulk.util.config.ConfigDefault
 import java.util.*
+import kotlin.jvm.optionals.getOrNull
 
 
-class OverviewInputPlugin : AhrefsBaseDelegate<OverviewInputPlugin.PluginTask>() {
+class OverviewInputPlugin<T : OverviewInputPlugin.PluginTask> : AhrefsBaseDelegate<T>() {
     interface PluginTask : AhrefsBaseDelegate.PluginTask {
-        @get:ConfigDefault("\"subdomains\"")
-        @get:Config("mode")
-        val mode: String
-
-        @get:ConfigDefault("\"both\"")
-        @get:Config("protocol")
-        val protocol: String
+        @get:ConfigDefault("null")
+        @get:Config("keyword_list_id")
+        val keywordListId: Optional<String>
 
         @get:ConfigDefault("null")
-        @get:Config("date")
-        val date: Optional<String>
+        @get:Config("keywords")
+        val keywords: Optional<String>
 
         @get:ConfigDefault("null")
-        @get:Config("target")
-        val target: Optional<String>
+        @get:Config("limit")
+        var limit: Optional<String>
+
+        @get:ConfigDefault("null")
+        @get:Config("offset")
+        var offset: Optional<String>
+
+        @get:ConfigDefault("null")
+        @get:Config("order_by")
+        var orderBy: Optional<String>
+
+        @get:ConfigDefault("null")
+        @get:Config("search_engine")
+        var searchEngine: Optional<SearchEngine>
+
+        @get:ConfigDefault("null")
+        @get:Config("timeout")
+        var timeout: Optional<String>
+
+        @get:ConfigDefault("null")
+        @get:Config("where")
+        val where: Optional<String>
+
+        @get:ConfigDefault("null")
+        @get:Config("country")
+        val country: Optional<Country>
+
+        @get:ConfigDefault("null")
+        @get:Config("select")
+        val select: Optional<String>
     }
 
-    override fun buildRequest(task: PluginTask): Request {
+    companion object {
+        val COLUMNS: Map<String, Type> = mapOf(
+            "clicks" to Types.LONG,
+            "cpc" to Types.LONG,
+            "cps" to Types.DOUBLE,
+            "difficulty" to Types.LONG,
+            "first_seen" to Types.TIMESTAMP,
+            "global_volume" to Types.LONG,
+            "keyword" to Types.STRING,
+            "parent_topic" to Types.STRING,
+            "parent_volume" to Types.LONG,
+            "searches_pct_clicks_organic_and_paid" to Types.DOUBLE,
+            "searches_pct_clicks_organic_only" to Types.DOUBLE,
+            "searches_pct_clicks_paid_only" to Types.DOUBLE,
+            "serp_features" to Types.JSON,
+            "serp_last_update" to Types.TIMESTAMP,
+            "traffic_potential" to Types.LONG,
+            "volume" to Types.LONG
+        )
+    }
+
+    override fun validateInputTask(task: T) {
+        require(task.country.isPresent)
+        require(task.select.isPresent)
+        require(task.keywordListId.isPresent || task.keywords.isPresent)
+        super.validateInputTask(task)
+    }
+
+    override fun buildRequest(task: T): Request {
         val queryParam = mapOf(
             "output" to "json",
-            "mode" to task.mode,
-            "protocol" to task.protocol,
-            "date" to task.date,
-            "target" to task.target
+            "keyword_list_id" to task.keywordListId.getOrNull(),
+            "keywords" to task.keywords.getOrNull(),
+            "limit" to task.limit.getOrNull(),
+            "offset" to task.offset.getOrNull(),
+            "order_by" to task.orderBy.getOrNull(),
+            "search_engine" to task.searchEngine.getOrNull()?.name?.lowercase(Locale.getDefault()),
+            "timeout" to task.timeout.getOrNull(),
+            "where" to task.where.getOrNull(),
+            "country" to task.country.get().name.lowercase(Locale.getDefault()),
+            "select" to task.select.get()
         )
-        val query = queryParam.entries.joinToString("&") { "${it.key}=${it.value}" }
         return Request.Builder()
-            .url("https://api.ahrefs.com/v3/site-explorer/backlinks-stats?${query}")
+            .url(buildUrl("https://api.ahrefs.com/v3/keywords-explorer/overview", queryParam))
             .addHeader("Accept", "application/json")
             .addHeader("Authorization", "Bearer ${task.apiKey}")
             .build()
     }
 
     override fun transformJsonRecord(
-        task: PluginTask,
+        task: T,
         record: JsonNode
     ): JsonNode {
-        return record.get("metrics")
+        return record.get("keywords")
     }
 
-    override fun buildServiceResponseMapper(task: PluginTask): ServiceResponseMapper<out ValueLocator> {
+    override fun buildServiceResponseMapper(task: T): ServiceResponseMapper<out ValueLocator> {
         val builder = JacksonServiceResponseMapper.builder()
-        builder
-            .add("live", Types.LONG)
-            .add("all_time", Types.LONG)
-            .add("live_refdomains", Types.LONG)
-            .add("all_time_refdomains", Types.LONG)
+        val select = task.select.get()
+        lookupField(select).forEach {
+            builder.add(it.first, it.second)
+        }
         return builder.build()
+    }
+
+    private fun lookupField(select: String): List<Pair<String, Type>> {
+        return select.split(",").map {
+            it to COLUMNS[it]
+        }.filterNot { it.second == null }.map { it.first to it.second!! }
     }
 }

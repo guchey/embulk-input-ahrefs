@@ -2,6 +2,9 @@ package io.github.guchey.embulk.input.ahrefs.delegate.siteexplorer
 
 import com.fasterxml.jackson.databind.JsonNode
 import io.github.guchey.embulk.input.ahrefs.delegate.AhrefsBaseDelegate
+import io.github.guchey.embulk.input.ahrefs.delegate.schema.HistoryGrouping
+import io.github.guchey.embulk.input.ahrefs.delegate.schema.Mode
+import io.github.guchey.embulk.input.ahrefs.delegate.schema.Protocol
 import okhttp3.Request
 import org.embulk.base.restclient.ServiceResponseMapper
 import org.embulk.base.restclient.jackson.JacksonServiceResponseMapper
@@ -10,25 +13,26 @@ import org.embulk.spi.type.Types
 import org.embulk.util.config.Config
 import org.embulk.util.config.ConfigDefault
 import java.util.*
+import kotlin.jvm.optionals.getOrNull
 
 
-class RefDomainsHistoryInputPlugin : AhrefsBaseDelegate<RefDomainsHistoryInputPlugin.PluginTask>() {
+class RefDomainsHistoryInputPlugin<T : RefDomainsHistoryInputPlugin.PluginTask> : AhrefsBaseDelegate<T>() {
     interface PluginTask : AhrefsBaseDelegate.PluginTask {
         @get:ConfigDefault("null")
         @get:Config("date_to")
         val dateTo: Optional<String>
 
-        @get:ConfigDefault("\"monthly\"")
+        @get:ConfigDefault("null")
         @get:Config("history_grouping")
-        val historyGrouping: String
+        val historyGrouping: Optional<HistoryGrouping>
 
-        @get:ConfigDefault("\"subdomains\"")
+        @get:ConfigDefault("null")
         @get:Config("mode")
-        val mode: String
+        val mode: Optional<Mode>
 
-        @get:ConfigDefault("\"both\"")
+        @get:ConfigDefault("null")
         @get:Config("protocol")
-        val protocol: String
+        val protocol: Optional<Protocol>
 
         @get:ConfigDefault("null")
         @get:Config("date_from")
@@ -39,32 +43,37 @@ class RefDomainsHistoryInputPlugin : AhrefsBaseDelegate<RefDomainsHistoryInputPl
         val target: Optional<String>
     }
 
-    override fun buildRequest(task: PluginTask): Request {
+    override fun validateInputTask(task: T) {
+        require(task.dateFrom.isPresent)
+        require(task.target.isPresent)
+        super.validateInputTask(task)
+    }
+
+    override fun buildRequest(task: T): Request {
         val queryParam = mapOf(
             "output" to "json",
-            "date_to" to task.dateTo,
-            "history_grouping" to task.historyGrouping,
-            "mode" to task.mode,
-            "protocol" to task.protocol,
-            "date_from" to task.dateFrom,
-            "target" to task.target
+            "date_to" to task.dateTo.getOrNull(),
+            "history_grouping" to task.historyGrouping.getOrNull()?.name?.lowercase(Locale.getDefault()),
+            "mode" to task.mode.getOrNull()?.name?.lowercase(Locale.getDefault()),
+            "protocol" to task.protocol.getOrNull()?.name?.lowercase(Locale.getDefault()),
+            "date_from" to task.dateFrom.get(),
+            "target" to task.target.get()
         )
-        val query = queryParam.entries.joinToString("&") { "${it.key}=${it.value}" }
         return Request.Builder()
-            .url("https://api.ahrefs.com/v3/site-explorer/refdomains-history?${query}")
+            .url(buildUrl("https://api.ahrefs.com/v3/site-explorer/refdomains-history", queryParam))
             .addHeader("Accept", "application/json")
             .addHeader("Authorization", "Bearer ${task.apiKey}")
             .build()
     }
 
     override fun transformJsonRecord(
-        task: PluginTask,
+        task: T,
         record: JsonNode
     ): JsonNode {
         return record.get("refdomains")
     }
 
-    override fun buildServiceResponseMapper(task: PluginTask): ServiceResponseMapper<out ValueLocator> {
+    override fun buildServiceResponseMapper(task: T): ServiceResponseMapper<out ValueLocator> {
         val builder = JacksonServiceResponseMapper.builder()
         builder
             .add("date", Types.STRING)

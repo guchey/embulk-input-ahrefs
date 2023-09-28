@@ -2,6 +2,7 @@ package io.github.guchey.embulk.input.ahrefs.delegate.siteexplorer
 
 import com.fasterxml.jackson.databind.JsonNode
 import io.github.guchey.embulk.input.ahrefs.delegate.AhrefsBaseDelegate
+import io.github.guchey.embulk.input.ahrefs.delegate.schema.Protocol
 import okhttp3.Request
 import org.embulk.base.restclient.ServiceResponseMapper
 import org.embulk.base.restclient.jackson.JacksonServiceResponseMapper
@@ -10,13 +11,14 @@ import org.embulk.spi.type.Types
 import org.embulk.util.config.Config
 import org.embulk.util.config.ConfigDefault
 import java.util.*
+import kotlin.jvm.optionals.getOrNull
 
 
-class DomainRatingInputPlugin : AhrefsBaseDelegate<DomainRatingInputPlugin.PluginTask>() {
+class DomainRatingInputPlugin<T: DomainRatingInputPlugin.PluginTask> : AhrefsBaseDelegate<T>() {
     interface PluginTask : AhrefsBaseDelegate.PluginTask {
-        @get:ConfigDefault("\"both\"")
+        @get:ConfigDefault("null")
         @get:Config("protocol")
-        val protocol: String
+        val protocol: Optional<Protocol>
 
         @get:ConfigDefault("null")
         @get:Config("date")
@@ -27,29 +29,34 @@ class DomainRatingInputPlugin : AhrefsBaseDelegate<DomainRatingInputPlugin.Plugi
         val target: Optional<String>
     }
 
-    override fun buildRequest(task: PluginTask): Request {
+
+    override fun validateInputTask(task: T) {
+        require(task.date.isPresent)
+        require(task.target.isPresent)
+        super.validateInputTask(task)
+    }
+    override fun buildRequest(task: T): Request {
         val queryParam = mapOf(
             "output" to "json",
-            "protocol" to task.protocol,
-            "date" to task.date,
-            "target" to task.target
+            "protocol" to task.protocol.getOrNull()?.name?.lowercase(Locale.getDefault()),
+            "date" to task.date.get(),
+            "target" to task.target.get()
         )
-        val query = queryParam.entries.joinToString("&") { "${it.key}=${it.value}" }
         return Request.Builder()
-            .url("https://api.ahrefs.com/v3/site-explorer/domain-rating?${query}")
+            .url(buildUrl("https://api.ahrefs.com/v3/site-explorer/domain-rating", queryParam))
             .addHeader("Accept", "application/json")
             .addHeader("Authorization", "Bearer ${task.apiKey}")
             .build()
     }
 
     override fun transformJsonRecord(
-        task: PluginTask,
+        task: T,
         record: JsonNode
     ): JsonNode {
         return record.get("domain_rating")
     }
 
-    override fun buildServiceResponseMapper(task: PluginTask): ServiceResponseMapper<out ValueLocator> {
+    override fun buildServiceResponseMapper(task: T): ServiceResponseMapper<out ValueLocator> {
         val builder = JacksonServiceResponseMapper.builder()
         builder
             .add("domain_rating", Types.DOUBLE)

@@ -5,16 +5,12 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import io.github.guchey.embulk.input.ahrefs.AhrefsInputPlugin.Companion.CONFIG_MAPPER_FACTORY
 import io.github.guchey.embulk.input.ahrefs.AhrefsInputPlugin.Companion.OBJECT_MAPPER
-import io.github.guchey.embulk.input.ahrefs.AhrefsInputPluginDelegate
 import io.github.guchey.embulk.input.ahrefs.okhttp.RetryInterceptor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
-import org.embulk.base.restclient.DefaultServiceDataSplitter
-import org.embulk.base.restclient.RestClientInputPluginDelegate
-import org.embulk.base.restclient.ServiceDataSplitter
-import org.embulk.base.restclient.ServiceResponseMapper
+import org.embulk.base.restclient.*
 import org.embulk.base.restclient.jackson.JacksonServiceRecord
 import org.embulk.base.restclient.jackson.JacksonServiceResponseMapper
 import org.embulk.base.restclient.record.RecordImporter
@@ -28,45 +24,40 @@ import org.embulk.util.config.Config
 import org.embulk.util.config.ConfigDefault
 import org.embulk.util.config.Task
 import org.slf4j.LoggerFactory
-import java.util.*
 
 
 abstract class AhrefsBaseDelegate<T : AhrefsBaseDelegate.PluginTask> : RestClientInputPluginDelegate<T> {
-    interface PluginTask : AhrefsInputPluginDelegate.PluginTask {
+    interface PluginTask : RestClientInputTaskBase {
 
         @get:Config("api_key")
         val apiKey: String
 
-        @get:ConfigDefault("null")
-        @get:Config("limit")
-        var limit: Optional<Int>
-
-        interface PagerOption : Task {
-            @get:ConfigDefault("[]")
-            @get:Config("initial_params")
-            val initialParams: List<Map<String?, Any?>?>?
-
-            @get:ConfigDefault("[]")
-            @get:Config("next_params")
-            val nextParams: List<Map<String?, Any?>?>?
-
-            @get:ConfigDefault("\".request_body\"")
-            @get:Config("next_body_transformer")
-            val nextBodyTransformer: String
-
-            @get:ConfigDefault("\"false\"")
-            @get:Config("while")
-            val `while`: String
-
-            @get:ConfigDefault("100")
-            @get:Config("interval_millis")
-            val intervalMillis: Long
-        }
-
-
-        @get:Config("pager")
-        @get:ConfigDefault("{}")
-        val pager: PagerOption
+//        interface PagerOption : Task {
+//            @get:ConfigDefault("[]")
+//            @get:Config("initial_params")
+//            val initialParams: List<Map<String?, Any?>?>?
+//
+//            @get:ConfigDefault("[]")
+//            @get:Config("next_params")
+//            val nextParams: List<Map<String?, Any?>?>?
+//
+//            @get:ConfigDefault("\".request_body\"")
+//            @get:Config("next_body_transformer")
+//            val nextBodyTransformer: String
+//
+//            @get:ConfigDefault("\"false\"")
+//            @get:Config("while")
+//            val `while`: String
+//
+//            @get:ConfigDefault("100")
+//            @get:Config("interval_millis")
+//            val intervalMillis: Long
+//        }
+//
+//
+//        @get:Config("pager")
+//        @get:ConfigDefault("{}")
+//        val pager: PagerOption
 
         interface RetryOption : Task {
             @get:ConfigDefault("\"true\"")
@@ -116,9 +107,9 @@ abstract class AhrefsBaseDelegate<T : AhrefsBaseDelegate.PluginTask> : RestClien
     override fun ingestServiceData(
         task: T, recordImporter: RecordImporter, taskIndex: Int, pageBuilder: PageBuilder
     ): TaskReport = runBlocking {
-        if (Exec.isPreview()) {
-            task.limit = Optional.of(PREVIEW_RECORD_LIMIT)
-        }
+//        if (Exec.isPreview()) {
+//            task.limit = Optional.of(PREVIEW_RECORD_LIMIT)
+//        }
         val retryInterceptor = RetryInterceptor(task)
         val client = OkHttpClient.Builder().addInterceptor(retryInterceptor).build()
         val response = fetch(client, task)
@@ -130,6 +121,12 @@ abstract class AhrefsBaseDelegate<T : AhrefsBaseDelegate.PluginTask> : RestClien
             imported++
         }
         return@runBlocking CONFIG_MAPPER_FACTORY.newTaskReport()
+    }
+
+    fun buildUrl(url: String, queryParam: Map<String, String?>): String {
+        val query =
+            queryParam.entries.filterNot { it.value.isNullOrEmpty() }.joinToString("&") { "${it.key}=${it.value}" }
+        return "${url}?${query}"
     }
 
 

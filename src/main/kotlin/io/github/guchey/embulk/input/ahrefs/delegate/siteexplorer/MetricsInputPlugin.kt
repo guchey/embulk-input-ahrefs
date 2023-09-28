@@ -2,8 +2,10 @@ package io.github.guchey.embulk.input.ahrefs.delegate.siteexplorer
 
 import com.fasterxml.jackson.databind.JsonNode
 import io.github.guchey.embulk.input.ahrefs.delegate.AhrefsBaseDelegate
+import io.github.guchey.embulk.input.ahrefs.delegate.schema.Country
 import io.github.guchey.embulk.input.ahrefs.delegate.schema.Mode
 import io.github.guchey.embulk.input.ahrefs.delegate.schema.Protocol
+import io.github.guchey.embulk.input.ahrefs.delegate.schema.VolumeMode
 import okhttp3.Request
 import org.embulk.base.restclient.ServiceResponseMapper
 import org.embulk.base.restclient.jackson.JacksonServiceResponseMapper
@@ -15,8 +17,12 @@ import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
 
-class BackLinkStatsInputPlugin<T : BackLinkStatsInputPlugin.PluginTask> : AhrefsBaseDelegate<T>() {
+class MetricsInputPlugin<T : MetricsInputPlugin.PluginTask> : AhrefsBaseDelegate<T>() {
     interface PluginTask : AhrefsBaseDelegate.PluginTask {
+        @get:ConfigDefault("null")
+        @get:Config("country")
+        val country: Optional<Country>
+
         @get:ConfigDefault("null")
         @get:Config("mode")
         val mode: Optional<Mode>
@@ -24,6 +30,10 @@ class BackLinkStatsInputPlugin<T : BackLinkStatsInputPlugin.PluginTask> : Ahrefs
         @get:ConfigDefault("null")
         @get:Config("protocol")
         val protocol: Optional<Protocol>
+
+        @get:ConfigDefault("null")
+        @get:Config("volume_mode")
+        val volumeMode: Optional<VolumeMode>
 
         @get:ConfigDefault("null")
         @get:Config("date")
@@ -43,13 +53,15 @@ class BackLinkStatsInputPlugin<T : BackLinkStatsInputPlugin.PluginTask> : Ahrefs
     override fun buildRequest(task: T): Request {
         val queryParam = mapOf(
             "output" to "json",
+            "country" to task.country.getOrNull()?.name?.lowercase(Locale.getDefault()),
             "mode" to task.mode.getOrNull()?.name?.lowercase(Locale.getDefault()),
             "protocol" to task.protocol.getOrNull()?.name?.lowercase(Locale.getDefault()),
+            "volume_mode" to task.volumeMode.getOrNull()?.name?.lowercase(Locale.getDefault()),
             "date" to task.date.get(),
             "target" to task.target.get()
         )
         return Request.Builder()
-            .url(buildUrl("https://api.ahrefs.com/v3/site-explorer/backlinks-stats", queryParam))
+            .url(buildUrl("https://api.ahrefs.com/v3/site-explorer/metrics",queryParam))
             .addHeader("Accept", "application/json")
             .addHeader("Authorization", "Bearer ${task.apiKey}")
             .build()
@@ -65,10 +77,14 @@ class BackLinkStatsInputPlugin<T : BackLinkStatsInputPlugin.PluginTask> : Ahrefs
     override fun buildServiceResponseMapper(task: T): ServiceResponseMapper<out ValueLocator> {
         val builder = JacksonServiceResponseMapper.builder()
         builder
-            .add("live", Types.LONG)
-            .add("all_time", Types.LONG)
-            .add("live_refdomains", Types.LONG)
-            .add("all_time_refdomains", Types.LONG)
+            .add("org_keywords", Types.LONG)
+            .add("paid_keywords", Types.LONG)
+            .add("org_keywords_1_3", Types.LONG)
+            .add("org_traffic", Types.LONG)
+            .add("org_cost", Types.LONG)
+            .add("paid_traffic", Types.LONG)
+            .add("paid_cost", Types.LONG)
+            .add("paid_pages", Types.LONG)
         return builder.build()
     }
 }
