@@ -4,10 +4,12 @@ plugins {
     id("jacoco")
     id("org.embulk.embulk-plugins") version "0.5.5"
     id("com.diffplug.spotless") version "6.11.0"
+    signing
 }
 
 group = "io.github.guchey.embulk.input.ahrefs"
 version = "0.1.0-ALPHA"
+description = "embulk-input-ahrefs is the gem preparing Embulk input plugins"
 var embulkVersion = "0.10.31"
 
 repositories {
@@ -55,10 +57,60 @@ publishing {
         register("embulkPluginMaven", MavenPublication::class) {
             from(components["java"])
         }
+        register("maven", MavenPublication::class) {
+            groupId = project.group.toString()
+            artifactId = project.name
+
+            from(components["java"])
+
+            pom {  // https://central.sonatype.org/pages/requirements.html
+                packaging = "jar"
+
+                name = project.name
+                description = project.description.toString()
+                // url = "https://github.com/your-github-username/your-plugin-name"
+
+                licenses {
+                    // Maven Central requires explicit license specification.
+                    // This is an example of the MIT License.
+                    license {
+                        // http://central.sonatype.org/pages/requirements.html#license-information
+                        name = "MIT License"
+                        url = "http://www.opensource.org/licenses/mit-license.php"
+                    }
+                }
+
+                developers {
+                    developer {
+                        name = "Shingen Taguchi"
+                        email = "taguchi8shingen@gmail.com"
+                    }
+                }
+
+                scm {
+                    connection = "scm:git:git://github.com/guchey/embulk-input-ahrefs.git"
+                    developerConnection = "scm:git:git@github.com/guchey/embulk-input-ahrefs.git"
+                    url = "https://github.com/guchey/embulk-input-ahrefs"
+                }
+            }
+        }
     }
     repositories {
         maven {
-            url = uri("${project.buildDir}/mavenPublishLocal")
+            name = "mavenCentral"
+            url = if (project.version.toString().endsWith("-SNAPSHOT")) {
+                uri("https://s01.oss.sonatype.org/content/repositories/snapshots")
+            } else {
+                uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2")
+            }
+
+            // This setting assumes that "~/.gradle/gradle.properties" has "ossrhUsername" and "ossrhPassword".
+            // Please put your Sonatype OSSRH username and password in "~/.gradle/gradle.properties".
+            // https://central.sonatype.org/publish/publish-gradle/#credentials
+            credentials {
+                username = if (project.hasProperty("ossrhUsername")) project.property("ossrhUsername").toString() else ""
+                password = if (project.hasProperty("ossrhPassword")) project.property("ossrhPassword").toString() else ""
+            }
         }
     }
 }
@@ -77,4 +129,12 @@ tasks.test {
 
 kotlin {
     jvmToolchain(8)
+}
+
+// Maven Central requires PGP signature.
+// https://central.sonatype.org/publish/requirements/gpg/
+// https://central.sonatype.org/publish/publish-gradle/#credentials
+signing {
+    useGpgCmd()
+    sign(publishing.publications["maven"])
 }
