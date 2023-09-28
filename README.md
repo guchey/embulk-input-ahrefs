@@ -99,7 +99,7 @@ All target have this configuration parameters.
 | offset          | false    | 0             | Returned results will start from the row indicated in the offset value.         |
 | order_by        | false    |               | A column to order results by. See response schema for valid column identifiers. |
 | search_engine   | false    | google        | The search engine to get keyword metrics for.                                   |
-| timeout         | false    | subdomains    | A manual timeout duration in seconds.                                           |
+| timeout         | false    |               | A manual timeout duration in seconds.                                           |
 | where           | false    | both          | The filter expression. The following column identifiers are recognized          |
 | country         | true     |               | A two-letter country code.                                                      |
 | select          | true     |               | select                                                                          |
