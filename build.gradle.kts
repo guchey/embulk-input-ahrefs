@@ -43,7 +43,7 @@ dependencies {
 
     testImplementation("org.embulk:embulk-deps:${embulkVersion}")
 
-    testImplementation("io.mockk:mockk:1.13.7")
+    testImplementation("io.mockk:mockk:1.13.8")
 }
 
 embulkPlugin {
