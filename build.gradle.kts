@@ -147,3 +147,7 @@ tasks.register("generateEmbulkProperties") {
         propFile.writeText("m2_repo=${System.getProperty("user.home")}/.m2/repository\nplugins.input.ahrefs=maven:${project.group}:ahrefs:${project.version}")
     }
 }
+
+tasks.withType<Sign>().configureEach {
+    onlyIf(System.getenv("CI")) { project.extra["isReleaseVersion"] as Boolean }
+}

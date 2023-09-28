@@ -1,4 +1,4 @@
-name: Build and test
+name: run config
 
 on: push
 
