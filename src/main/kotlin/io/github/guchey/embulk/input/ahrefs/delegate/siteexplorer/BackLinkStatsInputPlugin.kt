@@ -15,7 +15,7 @@ import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
 
-class BackLinkStatsInputPlugin : AhrefsBaseDelegate<BackLinkStatsInputPlugin.PluginTask>() {
+class BackLinkStatsInputPlugin<T : BackLinkStatsInputPlugin.PluginTask> : AhrefsBaseDelegate<T>() {
     interface PluginTask : AhrefsBaseDelegate.PluginTask {
         @get:ConfigDefault("null")
         @get:Config("mode")
@@ -34,13 +34,13 @@ class BackLinkStatsInputPlugin : AhrefsBaseDelegate<BackLinkStatsInputPlugin.Plu
         val target: Optional<String>
     }
 
-    override fun validateInputTask(task: PluginTask) {
+    override fun validateInputTask(task: T) {
         require(task.date.isPresent)
         require(task.target.isPresent)
         super.validateInputTask(task)
     }
 
-    override fun buildRequest(task: PluginTask): Request {
+    override fun buildRequest(task: T): Request {
         val queryParam = mapOf(
             "output" to "json",
             "mode" to task.mode.getOrNull()?.name?.lowercase(Locale.getDefault()),
@@ -56,13 +56,13 @@ class BackLinkStatsInputPlugin : AhrefsBaseDelegate<BackLinkStatsInputPlugin.Plu
     }
 
     override fun transformJsonRecord(
-        task: PluginTask,
+        task: T,
         record: JsonNode
     ): JsonNode {
         return record.get("metrics")
     }
 
-    override fun buildServiceResponseMapper(task: PluginTask): ServiceResponseMapper<out ValueLocator> {
+    override fun buildServiceResponseMapper(task: T): ServiceResponseMapper<out ValueLocator> {
         val builder = JacksonServiceResponseMapper.builder()
         builder
             .add("live", Types.LONG)

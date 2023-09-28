@@ -5,16 +5,12 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import io.github.guchey.embulk.input.ahrefs.AhrefsInputPlugin.Companion.CONFIG_MAPPER_FACTORY
 import io.github.guchey.embulk.input.ahrefs.AhrefsInputPlugin.Companion.OBJECT_MAPPER
-import io.github.guchey.embulk.input.ahrefs.AhrefsInputPluginDelegate
 import io.github.guchey.embulk.input.ahrefs.okhttp.RetryInterceptor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
-import org.embulk.base.restclient.DefaultServiceDataSplitter
-import org.embulk.base.restclient.RestClientInputPluginDelegate
-import org.embulk.base.restclient.ServiceDataSplitter
-import org.embulk.base.restclient.ServiceResponseMapper
+import org.embulk.base.restclient.*
 import org.embulk.base.restclient.jackson.JacksonServiceRecord
 import org.embulk.base.restclient.jackson.JacksonServiceResponseMapper
 import org.embulk.base.restclient.record.RecordImporter
@@ -31,7 +27,7 @@ import org.slf4j.LoggerFactory
 
 
 abstract class AhrefsBaseDelegate<T : AhrefsBaseDelegate.PluginTask> : RestClientInputPluginDelegate<T> {
-    interface PluginTask : AhrefsInputPluginDelegate.PluginTask {
+    interface PluginTask : RestClientInputTaskBase {
 
         @get:Config("api_key")
         val apiKey: String

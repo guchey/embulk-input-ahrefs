@@ -8,6 +8,7 @@ import okhttp3.Request
 import org.embulk.base.restclient.ServiceResponseMapper
 import org.embulk.base.restclient.jackson.JacksonServiceResponseMapper
 import org.embulk.base.restclient.record.ValueLocator
+import org.embulk.spi.type.Type
 import org.embulk.spi.type.Types
 import org.embulk.util.config.Config
 import org.embulk.util.config.ConfigDefault
@@ -15,7 +16,7 @@ import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
 
-class OverviewInputPlugin : AhrefsBaseDelegate<OverviewInputPlugin.PluginTask>() {
+class OverviewInputPlugin<T : OverviewInputPlugin.PluginTask> : AhrefsBaseDelegate<T>() {
     interface PluginTask : AhrefsBaseDelegate.PluginTask {
         @get:ConfigDefault("null")
         @get:Config("keyword_list_id")
@@ -23,7 +24,7 @@ class OverviewInputPlugin : AhrefsBaseDelegate<OverviewInputPlugin.PluginTask>()
 
         @get:ConfigDefault("null")
         @get:Config("keywords")
-        val keywords: Optional<List<String>>
+        val keywords: Optional<String>
 
         @get:ConfigDefault("null")
         @get:Config("limit")
@@ -58,18 +59,39 @@ class OverviewInputPlugin : AhrefsBaseDelegate<OverviewInputPlugin.PluginTask>()
         val select: Optional<String>
     }
 
-    override fun validateInputTask(task: PluginTask) {
+    companion object {
+        val COLUMNS: Map<String, Type> = mapOf(
+            "clicks" to Types.LONG,
+            "cpc" to Types.LONG,
+            "cps" to Types.DOUBLE,
+            "difficulty" to Types.LONG,
+            "first_seen" to Types.TIMESTAMP,
+            "global_volume" to Types.LONG,
+            "keyword" to Types.STRING,
+            "parent_topic" to Types.STRING,
+            "parent_volume" to Types.LONG,
+            "searches_pct_clicks_organic_and_paid" to Types.DOUBLE,
+            "searches_pct_clicks_organic_only" to Types.DOUBLE,
+            "searches_pct_clicks_paid_only" to Types.DOUBLE,
+            "serp_features" to Types.JSON,
+            "serp_last_update" to Types.TIMESTAMP,
+            "traffic_potential" to Types.LONG,
+            "volume" to Types.LONG
+        )
+    }
+
+    override fun validateInputTask(task: T) {
         require(task.country.isPresent)
         require(task.select.isPresent)
         require(task.keywordListId.isPresent || task.keywords.isPresent)
         super.validateInputTask(task)
     }
 
-    override fun buildRequest(task: PluginTask): Request {
+    override fun buildRequest(task: T): Request {
         val queryParam = mapOf(
             "output" to "json",
             "keyword_list_id" to task.keywordListId.getOrNull(),
-            "keywords" to task.keywords.getOrNull()?.joinToString(","),
+            "keywords" to task.keywords.getOrNull(),
             "limit" to task.limit.getOrNull(),
             "offset" to task.offset.getOrNull(),
             "order_by" to task.orderBy.getOrNull(),
@@ -80,26 +102,31 @@ class OverviewInputPlugin : AhrefsBaseDelegate<OverviewInputPlugin.PluginTask>()
             "select" to task.select.get()
         )
         return Request.Builder()
-            .url(buildUrl("https://api.ahrefs.com/v3/site-explorer/overview",queryParam))
+            .url(buildUrl("https://api.ahrefs.com/v3/keywords-explorer/overview", queryParam))
             .addHeader("Accept", "application/json")
             .addHeader("Authorization", "Bearer ${task.apiKey}")
             .build()
     }
 
     override fun transformJsonRecord(
-        task: PluginTask,
+        task: T,
         record: JsonNode
     ): JsonNode {
-        return record.get("metrics")
+        return record.get("keywords")
     }
 
-    override fun buildServiceResponseMapper(task: PluginTask): ServiceResponseMapper<out ValueLocator> {
+    override fun buildServiceResponseMapper(task: T): ServiceResponseMapper<out ValueLocator> {
         val builder = JacksonServiceResponseMapper.builder()
-        builder
-            .add("live", Types.LONG)
-            .add("all_time", Types.LONG)
-            .add("live_refdomains", Types.LONG)
-            .add("all_time_refdomains", Types.LONG)
+        val select = task.select.get()
+        lookupField(select).forEach {
+            builder.add(it.first, it.second)
+        }
         return builder.build()
+    }
+
+    fun lookupField(select: String): List<Pair<String, Type>> {
+        return select.split(",").map {
+            it to COLUMNS[it]
+        }.filterNot { it.second == null }.map { it.first to it.second!! }
     }
 }

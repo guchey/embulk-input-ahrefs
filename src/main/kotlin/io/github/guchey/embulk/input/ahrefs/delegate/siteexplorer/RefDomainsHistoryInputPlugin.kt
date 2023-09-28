@@ -16,7 +16,7 @@ import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
 
-class RefDomainsHistoryInputPlugin : AhrefsBaseDelegate<RefDomainsHistoryInputPlugin.PluginTask>() {
+class RefDomainsHistoryInputPlugin<T : RefDomainsHistoryInputPlugin.PluginTask> : AhrefsBaseDelegate<T>() {
     interface PluginTask : AhrefsBaseDelegate.PluginTask {
         @get:ConfigDefault("null")
         @get:Config("date_to")
@@ -43,13 +43,13 @@ class RefDomainsHistoryInputPlugin : AhrefsBaseDelegate<RefDomainsHistoryInputPl
         val target: Optional<String>
     }
 
-    override fun validateInputTask(task: PluginTask) {
+    override fun validateInputTask(task: T) {
         require(task.dateFrom.isPresent)
         require(task.target.isPresent)
         super.validateInputTask(task)
     }
 
-    override fun buildRequest(task: PluginTask): Request {
+    override fun buildRequest(task: T): Request {
         val queryParam = mapOf(
             "output" to "json",
             "date_to" to task.dateTo.getOrNull(),
@@ -67,13 +67,13 @@ class RefDomainsHistoryInputPlugin : AhrefsBaseDelegate<RefDomainsHistoryInputPl
     }
 
     override fun transformJsonRecord(
-        task: PluginTask,
+        task: T,
         record: JsonNode
     ): JsonNode {
         return record.get("refdomains")
     }
 
-    override fun buildServiceResponseMapper(task: PluginTask): ServiceResponseMapper<out ValueLocator> {
+    override fun buildServiceResponseMapper(task: T): ServiceResponseMapper<out ValueLocator> {
         val builder = JacksonServiceResponseMapper.builder()
         builder
             .add("date", Types.STRING)

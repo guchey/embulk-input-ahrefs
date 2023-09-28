@@ -2,6 +2,7 @@ package io.github.guchey.embulk.input.ahrefs
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonIgnore
+import io.github.guchey.embulk.input.ahrefs.delegate.AhrefsBaseDelegate
 import io.github.guchey.embulk.input.ahrefs.delegate.keywordsexplorer.OverviewInputPlugin
 import io.github.guchey.embulk.input.ahrefs.delegate.siteexplorer.BackLinkStatsInputPlugin
 import io.github.guchey.embulk.input.ahrefs.delegate.siteexplorer.DomainRatingInputPlugin
@@ -9,19 +10,20 @@ import io.github.guchey.embulk.input.ahrefs.delegate.siteexplorer.MetricsInputPl
 import io.github.guchey.embulk.input.ahrefs.delegate.siteexplorer.RefDomainsHistoryInputPlugin
 import org.embulk.base.restclient.DispatchingRestClientInputPluginDelegate
 import org.embulk.base.restclient.RestClientInputPluginDelegate
-import org.embulk.base.restclient.RestClientInputTaskBase
 import org.embulk.util.config.Config
 import org.slf4j.LoggerFactory
 import java.util.*
 
 
 class AhrefsInputPluginDelegate : DispatchingRestClientInputPluginDelegate<AhrefsInputPluginDelegate.PluginTask>() {
-    interface PluginTask : RestClientInputTaskBase {
+    interface PluginTask : AhrefsBaseDelegate.PluginTask, OverviewInputPlugin.PluginTask,
+        BackLinkStatsInputPlugin.PluginTask, DomainRatingInputPlugin.PluginTask, MetricsInputPlugin.PluginTask,
+        RefDomainsHistoryInputPlugin.PluginTask {
 
         @get:Config("resource")
         val resource: Resource
 
-        enum class Resource(private val restClientInputPluginDelegate: RestClientInputPluginDelegate<*>) {
+        enum class Resource(private val restClientInputPluginDelegate: RestClientInputPluginDelegate<PluginTask>) {
             SITE_EXPLORER_DOMAIN_RATING(DomainRatingInputPlugin()),
             SITE_EXPLORER_BACKLINK_STATS(BackLinkStatsInputPlugin()),
             SITE_EXPLORER_METRICS(MetricsInputPlugin()),
@@ -36,10 +38,9 @@ class AhrefsInputPluginDelegate : DispatchingRestClientInputPluginDelegate<Ahref
                 }
             }
 
-            @Suppress("UNCHECKED_CAST")
             @JsonIgnore
             fun getRestClientInputPluginDelegate(): RestClientInputPluginDelegate<PluginTask> {
-                return this.restClientInputPluginDelegate as RestClientInputPluginDelegate<PluginTask>
+                return this.restClientInputPluginDelegate
             }
         }
     }

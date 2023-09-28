@@ -14,7 +14,7 @@ import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
 
-class DomainRatingInputPlugin : AhrefsBaseDelegate<DomainRatingInputPlugin.PluginTask>() {
+class DomainRatingInputPlugin<T: DomainRatingInputPlugin.PluginTask> : AhrefsBaseDelegate<T>() {
     interface PluginTask : AhrefsBaseDelegate.PluginTask {
         @get:ConfigDefault("null")
         @get:Config("protocol")
@@ -30,12 +30,12 @@ class DomainRatingInputPlugin : AhrefsBaseDelegate<DomainRatingInputPlugin.Plugi
     }
 
 
-    override fun validateInputTask(task: PluginTask) {
+    override fun validateInputTask(task: T) {
         require(task.date.isPresent)
         require(task.target.isPresent)
         super.validateInputTask(task)
     }
-    override fun buildRequest(task: PluginTask): Request {
+    override fun buildRequest(task: T): Request {
         val queryParam = mapOf(
             "output" to "json",
             "protocol" to task.protocol.getOrNull()?.name?.lowercase(Locale.getDefault()),
@@ -50,13 +50,13 @@ class DomainRatingInputPlugin : AhrefsBaseDelegate<DomainRatingInputPlugin.Plugi
     }
 
     override fun transformJsonRecord(
-        task: PluginTask,
+        task: T,
         record: JsonNode
     ): JsonNode {
         return record.get("domain_rating")
     }
 
-    override fun buildServiceResponseMapper(task: PluginTask): ServiceResponseMapper<out ValueLocator> {
+    override fun buildServiceResponseMapper(task: T): ServiceResponseMapper<out ValueLocator> {
         val builder = JacksonServiceResponseMapper.builder()
         builder
             .add("domain_rating", Types.DOUBLE)
