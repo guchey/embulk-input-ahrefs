@@ -1,0 +1,329 @@
+openapi: 3.0.3
+info:
+  title: Mock Ahrefs API
+  description: Mock Ahrefs API
+  version: 0.1.0
+  contact:
+    name: Shingen Taguchi
+    email: taguchi8shignen@gmail.com
+servers:
+  - url: 'http://localhost:4010'
+    description: Mock Ahrefs API server
+paths:
+  '/v3/site-explorer/domain-rating':
+    get:
+      parameters:
+        - name: output
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: protocol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: date
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: target
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  domain_rating:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        domain_rating:
+                          type: number
+                        ahrefs_rank:
+                          type: integer
+  '/v3/site-explorer/backlinks-stats':
+    get:
+      parameters:
+        - name: mode
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: output
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: protocol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: date
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: target
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  metrics:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        live:
+                          type: integer
+                        all_time:
+                          type: integer
+                        live_refdomains:
+                          type: integer
+                        all_time_refdomains:
+                          type: integer
+  '/v3/site-explorer/metrics':
+    get:
+      parameters:
+        - name: country
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: mode
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: output
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: protocol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: volume_mode
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: date
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: target
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  metrics:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        org_keywords:
+                          type: integer
+                        paid_keywords:
+                          type: integer
+                        org_keywords_1_3:
+                          type: integer
+                        org_traffic:
+                          type: integer
+                        org_cost:
+                          type: integer
+                        paid_traffic:
+                          type: integer
+                        paid_cost:
+                          type: integer
+                        paid_pages:
+                          type: integer
+  '/v3/site-explorer/refdomains-history':
+    get:
+      parameters:
+        - name: date_to
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: history_grouping
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: mode
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: output
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: protocol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: date_from
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: target
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  refdomains:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                        refdomains:
+                          type: integer
+  '/v3/keywords-explorer/overview':
+    get:
+      parameters:
+        - name: keyword_list_id
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: keywords
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: order_by
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: output
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: search_engine
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: timeout
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: where
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: country
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: select
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  keywords:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        clicks:
+                          type: integer
+                        cpc:
+                          type: integer
+                        cps:
+                          type: number
+                        difficulty:
+                          type: integer
+                        first_seen:
+                          type: string
+                        global_volume:
+                          type: integer
+                        keyword:
+                          type: string
+                        parent_topic:
+                          type: string
+                        parent_volume:
+                          type: integer
+                        searches_pct_clicks_organic_and_paid:
+                          type: number
+                        searches_pct_clicks_organic_only:
+                          type: number
+                        searches_pct_clicks_paid_only:
+                          type: number
+                        serp_features:
+                          type: array
+                          items:
+                            type: string
+                        serp_last_update:
+                          type: string
+                        traffic_potential:
+                          type: integer
+                        volume:
+                          type: integer
+  
