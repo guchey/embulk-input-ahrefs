@@ -2,7 +2,7 @@ plugins {
     kotlin("jvm") version "1.8.0"
     id("maven-publish")
     id("jacoco")
-    id("org.embulk.embulk-plugins") version "0.5.5"
+    id("org.embulk.embulk-plugins") version "0.6.1"
     id("com.diffplug.spotless") version "6.11.0"
     signing
 }
@@ -142,4 +142,18 @@ signing {
 java {
     withSourcesJar()
     withJavadocJar()
+}
+
+tasks.register("generateEmbulkProperties") {
+    doLast {
+        val embulkDir = file("${System.getProperty("user.home")}/.embulk")
+        embulkDir.mkdirs()
+        val propFile = file("${System.getProperty("user.home")}/.embulk/embulk.properties")
+        propFile.appendText("m2_repo=${System.getProperty("user.home")}/.m2/repository\n")
+        propFile.appendText("plugins.input.ahrefs=maven:${project.group}:ahrefs:${project.version}\n")
+    }
+}
+
+tasks.withType<Sign>().configureEach {
+    onlyIf { !System.getenv().containsKey("CI") }
 }
