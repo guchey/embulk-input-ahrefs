@@ -75,15 +75,14 @@ jobs:
       - run: mvn install
         if: steps.m2-cache.outputs.cache-hit != 'true'
 
-      - run: ./gradlew generateEmbulkProperties
+      - name: Setup Embulk Properties
+        run: |
+          ./gradlew generateEmbulkProperties
+          echo "jruby=file:///home/runner/jruby-complete-${JRUBY_VERSION}.jar" >> ~/.embulk/embulk.properties
 
       - name: Setup Gem
         run: |
-          ./embulk -X jruby=file:///home/runner/jruby-complete-${JRUBY_VERSION}.jar gem install embulk -v ${{ matrix.embulk_version }}
-          ./embulk -X jruby=file:///home/runner/jruby-complete-${JRUBY_VERSION}.jar gem install msgpack
+          ./embulk gem install embulk -v ${{ matrix.embulk_version }}
+          ./embulk gem install msgpack
 
-      - name: Preview
-        run: ./embulk \
-             -X jruby=file:///home/runner/jruby-complete-${JRUBY_VERSION}.jar \
-             -X m2_repo=/home/runner/.m2/repository \
-             preview ${{ matrix.config }}
+      - run: ./embulk preview ${{ matrix.config }}
