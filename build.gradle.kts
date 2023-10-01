@@ -150,7 +150,7 @@ tasks.register("generateEmbulkProperties") {
         embulkDir.mkdirs()
         val propFile = file("${System.getProperty("user.home")}/.embulk/embulk.properties")
         propFile.appendText("m2_repo=${System.getProperty("user.home")}/.m2/repository\n")
-        propFile.appendText("plugins.input.ahrefs=maven:${project.group}:ahrefs:${project.version}")
+        propFile.appendText("plugins.input.ahrefs=maven:${project.group}:ahrefs:${project.version}\n")
     }
 }
 
