@@ -10,7 +10,6 @@ jobs:
         embulk_version:
           - 0.11.1
           - 0.10.50
-          - 0.9.25
         config:
           - e2e/site-explorer/backlink_stats_to_stdout.yml
           - e2e/site-explorer/domain_rating_to_stdout.yml
