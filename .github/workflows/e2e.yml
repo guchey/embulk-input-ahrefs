@@ -15,6 +15,7 @@ jobs:
           - e2e/site-explorer/domain_rating_to_stdout.yml
           - e2e/site-explorer/metrics_to_stdout.yml
           - e2e/site-explorer/ref_domains_history_to_stdout.yml
+          - e2e/site-explorer/url_rating_history_to_stdout.yml
           - e2e/keyword_explorer/overview_to_stdout.yml
 
     runs-on: ubuntu-latest
