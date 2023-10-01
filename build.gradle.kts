@@ -31,7 +31,7 @@ dependencies {
         exclude(group = "org.embulk", module = "embulk-core")
     }
 
-    implementation("org.embulk:embulk-util-retryhelper-jaxrs:0.8.1")
+    implementation("org.embulk:embulk-util-retryhelper-jaxrs:0.9.0")
 
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
