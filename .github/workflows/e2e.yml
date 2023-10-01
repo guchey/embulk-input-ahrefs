@@ -75,10 +75,10 @@ jobs:
 
       - run: ./gradlew generateEmbulkProperties
 
-      - name: Setup Gem
-        run: |
-          ./embulk gem install embulk -v ${{ matrix.embulk_version }}
-          ./embulk gem install msgpack
+#      - name: Setup Gem
+#        run: |
+#          ./embulk gem install embulk -v ${{ matrix.embulk_version }}
+#          ./embulk gem install msgpack
 
       - name: display embulk.properties
         run: cat /home/runner/.embulk/embulk.properties
