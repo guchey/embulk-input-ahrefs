@@ -1,5 +1,0 @@
-type: ahrefs
-api_key: dummy
-resource: domain_rating
-columns:
-  - {name: domain_rating, type: string}

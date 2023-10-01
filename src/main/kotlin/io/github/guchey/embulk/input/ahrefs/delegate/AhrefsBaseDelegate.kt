@@ -30,6 +30,10 @@ import java.util.*
 abstract class AhrefsBaseDelegate<T : AhrefsBaseDelegate.PluginTask> : RestClientInputPluginDelegate<T> {
     interface PluginTask : RestClientInputTaskBase {
 
+        @get:ConfigDefault("\"https://api.ahrefs.com\"")
+        @get:Config("base_url")
+        val baseUrl: String
+
         @get:Config("api_key")
         val apiKey: String
 

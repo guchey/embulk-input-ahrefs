@@ -1,0 +1,11 @@
+in:
+  type: ahrefs
+  base_url: http://0.0.0.0:4010
+  api_key: dummy
+  resource: site_explorer_domain_rating
+  target: wordcount.com
+  date_to: "2023-09-01"
+  date_from: "2023-08-01"
+  date: "2023-08-01"
+out:
+  type: stdout

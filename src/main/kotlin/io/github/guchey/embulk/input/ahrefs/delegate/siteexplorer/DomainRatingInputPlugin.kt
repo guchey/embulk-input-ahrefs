@@ -43,7 +43,7 @@ class DomainRatingInputPlugin<T: DomainRatingInputPlugin.PluginTask> : AhrefsBas
             "target" to task.target.get()
         )
         return Request.Builder()
-            .url(buildUrl("https://api.ahrefs.com/v3/site-explorer/domain-rating", queryParam))
+            .url(buildUrl("${task.baseUrl}/v3/site-explorer/domain-rating", queryParam))
             .addHeader("Accept", "application/json")
             .addHeader("Authorization", "Bearer ${task.apiKey}")
             .build()

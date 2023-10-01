@@ -1,0 +1,10 @@
+in:
+  type: ahrefs
+  base_url: http://0.0.0.0:4010
+  api_key: dummy
+  resource: keyword_explorer_overview
+  country: us
+  keywords: "ahrefs"
+  select: keyword,volume,traffic_potential,difficulty
+out:
+  type: stdout
