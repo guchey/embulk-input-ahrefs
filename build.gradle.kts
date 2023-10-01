@@ -68,7 +68,7 @@ publishing {
 
                 name = project.name
                 description = project.description.toString()
-                // url = "https://github.com/your-github-username/your-plugin-name"
+                url = "https://github.com/guchey/embulk-input-ahrefs"
 
                 licenses {
                     // Maven Central requires explicit license specification.
