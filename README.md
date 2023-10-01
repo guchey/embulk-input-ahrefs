@@ -86,14 +86,25 @@ All target have this configuration parameters.
 
 `resource: site_explorer_ref_domains_history`
 
-| name             | required | default value | description                                                                                                  |
-|------------------|----------|---------------|--------------------------------------------------------------------------------------------------------------|
-| date_to          | false    |               | The end date of the historical period in YYYY-MM-DD format.                                                  |
-| history_grouping | false    | monthly       | The time interval used to group historical data.Allowed values:　daily / weekly / monthly                     |
-| mode             | false    | subdomains    | The scope of the search based on the target you entered.Allowed values:　exact / prefix / domain / subdomains |
-| protocol         | false    | both          | The protocol of your target.　Allowed values:　both / http / https                                             |
-| date_from        | true     |               | The start date of the historical period in YYYY-MM-DD format.                                                |
-| target           | true     |               | The target of the search: a domain or a URL.                                                                 |
+| name             | required | default value | description                                                   |
+|------------------|----------|---------------|---------------------------------------------------------------|
+| date_to          | false    |               | The end date of the historical period in YYYY-MM-DD format.   |
+| history_grouping | false    | monthly       | The time interval used to group historical data.              |
+| mode             | false    | subdomains    | The scope of the search based on the target you entered.      |
+| protocol         | false    | both          | The protocol of your target.　                                 |
+| date_from        | true     |               | The start date of the historical period in YYYY-MM-DD format. |
+| target           | true     |               | The target of the search: a domain or a URL.                  |
+
+### Refdomains history
+
+`resource: site_explorer_url_rating_history`
+
+| name             | required | default value | description                                                   |
+|------------------|----------|---------------|---------------------------------------------------------------|
+| date_to          | false    |               | The end date of the historical period in YYYY-MM-DD format.   |
+| history_grouping | false    | monthly       | The time interval used to group historical data.              |
+| date_from        | true     |               | The start date of the historical period in YYYY-MM-DD format. |
+| target           | true     |               | The target of the search: a domain or a URL.                  |
 
 ### Overview
 

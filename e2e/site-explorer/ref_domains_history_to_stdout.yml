@@ -4,8 +4,6 @@ in:
   api_key: dummy
   resource: site_explorer_ref_domains_history
   target: wordcount.com
-  date_to: "2023-09-01"
   date_from: "2023-08-01"
-  date: "2023-08-01"
 out:
   type: stdout
