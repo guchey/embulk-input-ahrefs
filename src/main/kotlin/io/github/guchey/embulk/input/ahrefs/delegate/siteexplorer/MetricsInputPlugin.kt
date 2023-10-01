@@ -61,7 +61,7 @@ class MetricsInputPlugin<T : MetricsInputPlugin.PluginTask> : AhrefsBaseDelegate
             "target" to task.target.get()
         )
         return Request.Builder()
-            .url(buildUrl("https://api.ahrefs.com/v3/site-explorer/metrics",queryParam))
+            .url(buildUrl("${task.baseUrl}/v3/site-explorer/metrics",queryParam))
             .addHeader("Accept", "application/json")
             .addHeader("Authorization", "Bearer ${task.apiKey}")
             .build()
