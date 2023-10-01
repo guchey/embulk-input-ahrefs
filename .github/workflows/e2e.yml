@@ -8,13 +8,15 @@ jobs:
     strategy:
       matrix:
         embulk_version:
-          - 0.11.0
+          - 0.11.1
+          - 0.10.50
+          - 0.9.25
         config:
           - e2e/site-explorer/backlink_stats_to_stdout.yml
-#          - e2e/site-explorer/domain_rating_to_stdout.yml
-#          - e2e/site-explorer/metrics_to_stdout.yml
-#          - e2e/site-explorer/ref_domains_history_to_stdout.yml
-#          - e2e/keyword_explorer/overview_to_stdout.yml
+          - e2e/site-explorer/domain_rating_to_stdout.yml
+          - e2e/site-explorer/metrics_to_stdout.yml
+          - e2e/site-explorer/ref_domains_history_to_stdout.yml
+          - e2e/keyword_explorer/overview_to_stdout.yml
 
     runs-on: ubuntu-latest
 
@@ -86,5 +88,5 @@ jobs:
 
       - name: publishEmbulkPluginMavenPublicationToMavenLocal
         run: ./gradlew publishEmbulkPluginMavenPublicationToMavenLocal
-        
+
       - run: ./embulk preview ${{ matrix.config }}
