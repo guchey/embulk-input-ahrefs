@@ -138,3 +138,8 @@ signing {
     useGpgCmd()
     sign(publishing.publications["maven"])
 }
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
