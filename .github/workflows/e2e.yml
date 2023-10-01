@@ -18,6 +18,9 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    env:
+      JRUBY_VERSION: 9.4.3.0
+
     services:
       prism:
         image: ghcr.io/guchey/prism:latest
@@ -34,10 +37,7 @@ jobs:
           distribution: "zulu"
 
       - name: Set up jruby
-        run: |
-          curl -o /home/runner/jruby.jar -L https://repo1.maven.org/maven2/org/jruby/jruby-complete/${JRUBY_VERSION}/jruby-complete-${JRUBY_VERSION}.jar
-        env:
-          JRUBY_VERSION: 9.4.3.0
+        run: curl -o /home/runner/jruby-complete-${JRUBY_VERSION}.jar -L https://repo1.maven.org/maven2/org/jruby/jruby-complete/${JRUBY_VERSION}/jruby-complete-${JRUBY_VERSION}.jar
 
       - name: Set up embulk
         run: |
@@ -77,12 +77,15 @@ jobs:
 
       - run: ./gradlew generateEmbulkProperties
 
-#      - name: Setup Gem
-#        run: |
-#          ./embulk gem install embulk -v ${{ matrix.embulk_version }}
-#          ./embulk gem install msgpack
+      - name: Setup Gem
+        run: |
+          ./embulk -X jruby=file:///home/runner/jruby-complete-${JRUBY_VERSION}.jar gem install embulk -v ${{ matrix.embulk_version }}
+          ./embulk -X jruby=file:///home/runner/jruby-complete-${JRUBY_VERSION}.jar gem install msgpack
 
       - name: display embulk.properties
         run: cat /home/runner/.embulk/embulk.properties
 
-      - run: ./embulk preview ${{ matrix.config }}
+      - run: ./embulk \
+             -X jruby=file:///home/runner/jruby-complete-${JRUBY_VERSION}.jar \
+             -X m2_repo=/home/runner/.m2/repository \
+             preview ${{ matrix.config }}
