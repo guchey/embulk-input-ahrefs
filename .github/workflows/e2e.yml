@@ -45,7 +45,7 @@ jobs:
           curl -o ./embulk -L https://github.com/embulk/embulk/releases/download/v${{ matrix.embulk_version }}/embulk-${{ matrix.embulk_version }}.jar
           chmod +x ./embulk
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: gradle-cache
         with:
           path: |
@@ -63,7 +63,7 @@ jobs:
 
       - run: cp build/publications/embulkPluginMaven/pom-default.xml pom.xml
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: m2-cache
         with:
           path: |
