@@ -20,7 +20,7 @@ dependencies {
     compileOnly("org.embulk:embulk-api:${embulkVersion}")
     compileOnly("org.embulk:embulk-spi:${embulkVersion}")
 
-    implementation("org.embulk:embulk-util-config:0.3.1") {
+    implementation("org.embulk:embulk-util-config:0.3.4") {
         exclude(group = "com.fasterxml.jackson.core", module = "jackson-annotations")
         exclude(group = "com.fasterxml.jackson.core", module = "jackson-core")
         exclude(group = "com.fasterxml.jackson.core", module = "jackson-databind")
