@@ -71,9 +71,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-m2-
 
-      - name: publishEmbulkPluginMavenPublicationToMavenLocal
-        run: ./gradlew publishEmbulkPluginMavenPublicationToMavenLocal
-
       - run: mvn install
         if: steps.m2-cache.outputs.cache-hit != 'true'
 
@@ -87,4 +84,7 @@ jobs:
           ./embulk gem install embulk -v ${{ matrix.embulk_version }}
           ./embulk gem install msgpack
 
+      - name: publishEmbulkPluginMavenPublicationToMavenLocal
+        run: ./gradlew publishEmbulkPluginMavenPublicationToMavenLocal
+        
       - run: ./embulk preview ${{ matrix.config }}
