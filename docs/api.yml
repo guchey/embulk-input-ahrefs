@@ -221,6 +221,122 @@ paths:
                           type: string
                         refdomains:
                           type: integer
+  '/v3/site-explorer/url-rating-history':
+    get:
+      parameters:
+        - name: date_to
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: history_grouping
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: output
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: date_from
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: target
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url_ratings:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                        url_rating:
+                          type: number
+  '/v3/site-explorer/metrics-history':
+    get:
+      parameters:
+        - name: country
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: date_to
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: history_grouping
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: mode
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: output
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: protocol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: volume_mode
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: date_from
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: target
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  metrics:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                        org_traffic:
+                          type: integer
+                        paid_traffic:
+                          type: integer
+                        org_cost:
+                          type: integer
+                        paid_cost:
+                          type: integer
   '/v3/keywords-explorer/overview':
     get:
       parameters:
