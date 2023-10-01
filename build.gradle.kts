@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "io.github.guchey.embulk.input.ahrefs"
-version = "0.1.0-SNAPSHOT"
+version = "0.1.0"
 description = "embulk-input-ahrefs is the gem preparing Embulk input plugins"
 var embulkVersion = "0.10.31"
 
@@ -68,7 +68,7 @@ publishing {
 
                 name = project.name
                 description = project.description.toString()
-                // url = "https://github.com/your-github-username/your-plugin-name"
+                url = "https://github.com/guchey/embulk-input-ahrefs"
 
                 licenses {
                     // Maven Central requires explicit license specification.
@@ -137,4 +137,9 @@ kotlin {
 signing {
     useGpgCmd()
     sign(publishing.publications["maven"])
+}
+
+java {
+    withSourcesJar()
+    withJavadocJar()
 }
