@@ -21,7 +21,10 @@ class AhrefsInputPluginDelegate : DispatchingRestClientInputPluginDelegate<Ahref
         RefDomainsHistoryInputPlugin.PluginTask,
         UrlRatingHistoryInputPlugin.PluginTask,
         MetricsHistoryPlugin.PluginTask,
-        PagesHistoryInputPlugin.PluginTask {
+        PagesHistoryInputPlugin.PluginTask,
+        KeywordsHistoryInputPlugin.PluginTask,
+        MetricsByCountryInputPlugin.PluginTask,
+        PagesByTrafficInputPlugin.PluginTask {
 
         @get:Config("resource")
         val resource: Resource
@@ -34,6 +37,9 @@ class AhrefsInputPluginDelegate : DispatchingRestClientInputPluginDelegate<Ahref
             SITE_EXPLORER_URL_RATING_HISTORY(UrlRatingHistoryInputPlugin()),
             SITE_EXPLORER_METRICS_HISTORY(MetricsHistoryPlugin()),
             SITE_EXPLORER_PAGES_HISTORY(PagesHistoryInputPlugin()),
+            SITE_EXPLORER_KEYWORDS_HISTORY(KeywordsHistoryInputPlugin()),
+            SITE_EXPLORER_METRICS_BY_COUNTRY(MetricsByCountryInputPlugin()),
+            SITE_EXPLORER_PAGES_BY_TRAFFIC(PagesByTrafficInputPlugin()),
             KEYWORD_EXPLORER_OVERVIEW(OverviewInputPlugin());
 
             companion object {
