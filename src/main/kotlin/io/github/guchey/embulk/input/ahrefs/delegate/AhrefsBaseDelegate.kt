@@ -80,7 +80,7 @@ abstract class AhrefsBaseDelegate<T : AhrefsBaseDelegate.PluginTask> : RestClien
     }
 
     override fun validateInputTask(task: T) {
-        if (!task.apiKey.isPresent && !System.getenv("EMBULK_INPUT_AHREFS_API_KEY").isNullOrEmpty()) {
+        if (!task.apiKey.isPresent && System.getenv("EMBULK_INPUT_AHREFS_API_KEY").isNullOrEmpty()) {
             throw ConfigException("Either Field 'apiKey' or Environment variables 'EMBULK_INPUT_AHREFS_API_KEY' is required but not set");
         }
         task.validate()
