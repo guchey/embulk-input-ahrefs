@@ -1,0 +1,73 @@
+name: Run e2e test Embulk > 0.10.50
+
+on: push
+
+jobs:
+  build:
+
+    strategy:
+      matrix:
+        embulk_version:
+          - 0.9.25
+        config:
+          - e2e/site-explorer/backlink_stats_to_stdout.yml
+          - e2e/site-explorer/domain_rating_to_stdout.yml
+          - e2e/site-explorer/metrics_to_stdout.yml
+          - e2e/site-explorer/ref_domains_history_to_stdout.yml
+          - e2e/site-explorer/url_rating_history_to_stdout.yml
+          - e2e/site-explorer/metrics_history_to_stdout.yml
+          - e2e/site-explorer/keywords_history_to_stdout.yml
+          - e2e/site-explorer/metrics_by_country_to_stdout.yml
+          - e2e/site-explorer/pages_by_traffic_to_stdout.yml
+          - e2e/keyword_explorer/overview_to_stdout.yml
+
+    runs-on: ubuntu-latest
+
+    env:
+      JRUBY_VERSION: 9.4.3.0
+      EMBULK_INPUT_AHREFS_BASE_URL: http://0.0.0.0:4010
+      EMBULK_INPUT_AHREFS_API_KEY: dummy
+
+    services:
+      prism:
+        image: ghcr.io/guchey/prism:latest
+        ports:
+          - 4010:4010
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v3
+        with:
+          java-version: 8
+          distribution: "zulu"
+
+      - name: Set up embulk
+        run: |
+          curl -o ./embulk -L https://github.com/embulk/embulk/releases/download/v${{ matrix.embulk_version }}/embulk-${{ matrix.embulk_version }}.jar
+          chmod +x ./embulk
+
+      - uses: actions/cache@v3
+        id: gradle-cache
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', 'settings.gradle.kts', 'build.gradle', 'gradle.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - run: ./gradlew dependencies
+        if: steps.gradle-cache.outputs.cache-hit != 'true'
+
+      - name: gem
+        run: ./gradlew gem
+
+      - name: Setup Gem
+        run: |
+          ./embulk gem install embulk -v ${{ matrix.embulk_version }}
+          ./embulk gem install msgpack
+          ./embulk gem install build/gems/embulk-input-ahrefs-*.gem
+
+      - run: ./embulk preview ${{ matrix.config }}

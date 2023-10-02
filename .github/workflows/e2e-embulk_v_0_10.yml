@@ -1,4 +1,4 @@
-name: Run e2e test
+name: Run e2e test Embulk > 0.10.50
 
 on: push
 
