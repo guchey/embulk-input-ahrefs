@@ -1,7 +1,5 @@
 in:
   type: ahrefs
-  base_url: http://0.0.0.0:4010
-  api_key: dummy
   resource: site_explorer_pages_by_traffic
   target: wordcount.com
 out:

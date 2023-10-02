@@ -12,7 +12,6 @@ import org.embulk.spi.type.Types
 import org.embulk.util.config.Config
 import org.embulk.util.config.ConfigDefault
 import java.util.*
-import kotlin.jvm.optionals.getOrNull
 
 
 class DomainRatingInputPlugin<T: DomainRatingInputPlugin.PluginTask> : AhrefsBaseDelegate<T>() {
@@ -44,9 +43,9 @@ class DomainRatingInputPlugin<T: DomainRatingInputPlugin.PluginTask> : AhrefsBas
             "target" to task.target.get()
         )
         return Request.Builder()
-            .url(buildUrl("${task.baseUrl}/v3/site-explorer/domain-rating", queryParam))
+            .url(buildUrl("${resolveAhrefsUrl(task)}/v3/site-explorer/domain-rating", queryParam))
             .addHeader("Accept", "application/json")
-            .addHeader("Authorization", "Bearer ${task.apiKey}")
+            .addHeader("Authorization", resolveAuthHeader(task))
             .build()
     }
 

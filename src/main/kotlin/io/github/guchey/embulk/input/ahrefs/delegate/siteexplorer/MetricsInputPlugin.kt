@@ -11,7 +11,6 @@ import org.embulk.spi.type.Types
 import org.embulk.util.config.Config
 import org.embulk.util.config.ConfigDefault
 import java.util.*
-import kotlin.jvm.optionals.getOrNull
 
 
 class MetricsInputPlugin<T : MetricsInputPlugin.PluginTask> : AhrefsBaseDelegate<T>() {
@@ -58,9 +57,9 @@ class MetricsInputPlugin<T : MetricsInputPlugin.PluginTask> : AhrefsBaseDelegate
             "target" to task.target.get()
         )
         return Request.Builder()
-            .url(buildUrl("${task.baseUrl}/v3/site-explorer/metrics",queryParam))
+            .url(buildUrl("${resolveAhrefsUrl(task)}/v3/site-explorer/metrics",queryParam))
             .addHeader("Accept", "application/json")
-            .addHeader("Authorization", "Bearer ${task.apiKey}")
+            .addHeader("Authorization", resolveAuthHeader(task))
             .build()
     }
 

@@ -1,7 +1,5 @@
 in:
   type: ahrefs
-  base_url: http://0.0.0.0:4010
-  api_key: dummy
   resource: site_explorer_metrics_by_country
   target: wordcount.com
   date: "2023-08-01"
