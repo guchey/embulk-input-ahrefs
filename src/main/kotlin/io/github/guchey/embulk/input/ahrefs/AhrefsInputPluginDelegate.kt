@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonIgnore
 import io.github.guchey.embulk.input.ahrefs.delegate.AhrefsBaseDelegate
 import io.github.guchey.embulk.input.ahrefs.delegate.keywordsexplorer.OverviewInputPlugin
-import io.github.guchey.embulk.input.ahrefs.delegate.siteexplorer.BackLinkStatsInputPlugin
-import io.github.guchey.embulk.input.ahrefs.delegate.siteexplorer.DomainRatingInputPlugin
-import io.github.guchey.embulk.input.ahrefs.delegate.siteexplorer.MetricsInputPlugin
-import io.github.guchey.embulk.input.ahrefs.delegate.siteexplorer.RefDomainsHistoryInputPlugin
+import io.github.guchey.embulk.input.ahrefs.delegate.siteexplorer.*
 import org.embulk.base.restclient.DispatchingRestClientInputPluginDelegate
 import org.embulk.base.restclient.RestClientInputPluginDelegate
 import org.embulk.util.config.Config
@@ -16,9 +13,18 @@ import java.util.*
 
 
 class AhrefsInputPluginDelegate : DispatchingRestClientInputPluginDelegate<AhrefsInputPluginDelegate.PluginTask>() {
-    interface PluginTask : AhrefsBaseDelegate.PluginTask, OverviewInputPlugin.PluginTask,
-        BackLinkStatsInputPlugin.PluginTask, DomainRatingInputPlugin.PluginTask, MetricsInputPlugin.PluginTask,
-        RefDomainsHistoryInputPlugin.PluginTask {
+    interface PluginTask : AhrefsBaseDelegate.PluginTask,
+        OverviewInputPlugin.PluginTask,
+        BackLinkStatsInputPlugin.PluginTask,
+        DomainRatingInputPlugin.PluginTask,
+        MetricsInputPlugin.PluginTask,
+        RefDomainsHistoryInputPlugin.PluginTask,
+        UrlRatingHistoryInputPlugin.PluginTask,
+        MetricsHistoryPlugin.PluginTask,
+        PagesHistoryInputPlugin.PluginTask,
+        KeywordsHistoryInputPlugin.PluginTask,
+        MetricsByCountryInputPlugin.PluginTask,
+        PagesByTrafficInputPlugin.PluginTask {
 
         @get:Config("resource")
         val resource: Resource
@@ -28,6 +34,12 @@ class AhrefsInputPluginDelegate : DispatchingRestClientInputPluginDelegate<Ahref
             SITE_EXPLORER_BACKLINK_STATS(BackLinkStatsInputPlugin()),
             SITE_EXPLORER_METRICS(MetricsInputPlugin()),
             SITE_EXPLORER_REF_DOMAINS_HISTORY(RefDomainsHistoryInputPlugin()),
+            SITE_EXPLORER_URL_RATING_HISTORY(UrlRatingHistoryInputPlugin()),
+            SITE_EXPLORER_METRICS_HISTORY(MetricsHistoryPlugin()),
+            SITE_EXPLORER_PAGES_HISTORY(PagesHistoryInputPlugin()),
+            SITE_EXPLORER_KEYWORDS_HISTORY(KeywordsHistoryInputPlugin()),
+            SITE_EXPLORER_METRICS_BY_COUNTRY(MetricsByCountryInputPlugin()),
+            SITE_EXPLORER_PAGES_BY_TRAFFIC(PagesByTrafficInputPlugin()),
             KEYWORD_EXPLORER_OVERVIEW(OverviewInputPlugin());
 
             companion object {

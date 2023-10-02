@@ -1,7 +1,6 @@
 in:
   type: ahrefs
-  resource: site_explorer_metrics
+  resource: site_explorer_pages_by_traffic
   target: wordcount.com
-  date: "2023-08-01"
 out:
   type: stdout

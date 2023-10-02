@@ -1,6 +1,6 @@
 in:
   type: ahrefs
-  resource: site_explorer_ref_domains_history
+  resource: site_explorer_metrics_history
   target: wordcount.com
   date_from: "2023-08-01"
 out:

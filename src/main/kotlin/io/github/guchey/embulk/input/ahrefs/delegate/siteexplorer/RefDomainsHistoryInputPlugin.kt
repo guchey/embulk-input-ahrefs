@@ -5,6 +5,7 @@ import io.github.guchey.embulk.input.ahrefs.delegate.AhrefsBaseDelegate
 import io.github.guchey.embulk.input.ahrefs.delegate.schema.HistoryGrouping
 import io.github.guchey.embulk.input.ahrefs.delegate.schema.Mode
 import io.github.guchey.embulk.input.ahrefs.delegate.schema.Protocol
+import io.github.guchey.embulk.input.ahrefs.delegate.schema.getNameOrNull
 import okhttp3.Request
 import org.embulk.base.restclient.ServiceResponseMapper
 import org.embulk.base.restclient.jackson.JacksonServiceResponseMapper
@@ -53,16 +54,16 @@ class RefDomainsHistoryInputPlugin<T : RefDomainsHistoryInputPlugin.PluginTask> 
         val queryParam = mapOf(
             "output" to "json",
             "date_to" to task.dateTo.getOrNull(),
-            "history_grouping" to task.historyGrouping.getOrNull()?.name?.lowercase(Locale.getDefault()),
-            "mode" to task.mode.getOrNull()?.name?.lowercase(Locale.getDefault()),
-            "protocol" to task.protocol.getOrNull()?.name?.lowercase(Locale.getDefault()),
+            "history_grouping" to task.historyGrouping.getNameOrNull(),
+            "mode" to task.mode.getNameOrNull(),
+            "protocol" to task.protocol.getNameOrNull(),
             "date_from" to task.dateFrom.get(),
             "target" to task.target.get()
         )
         return Request.Builder()
-            .url(buildUrl("${task.baseUrl}/v3/site-explorer/refdomains-history", queryParam))
+            .url(buildUrl("${resolveAhrefsUrl(task)}/v3/site-explorer/refdomains-history", queryParam))
             .addHeader("Accept", "application/json")
-            .addHeader("Authorization", "Bearer ${task.apiKey}")
+            .addHeader("Authorization", resolveAuthHeader(task))
             .build()
     }
 
