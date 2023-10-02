@@ -1,16 +1,16 @@
 plugins {
-    kotlin("jvm") version "1.8.0"
-    id("maven-publish")
-    id("jacoco")
-    id("org.embulk.embulk-plugins") version "0.6.1"
-    id("com.diffplug.spotless") version "6.11.0"
-    signing
+    id 'org.jetbrains.kotlin.jvm' version '1.8.0'
+    id 'maven-publish'
+    id 'jacoco'
+    id 'org.embulk.embulk-plugins' version '0.6.1'
+    id 'com.diffplug.spotless' version '6.11.0'
+    id 'signing'
 }
 
 group = "io.github.guchey.embulk.input.ahrefs"
 version = "0.1.0"
 description = "embulk-input-ahrefs is the gem preparing Embulk input plugins"
-var embulkVersion = "0.10.31"
+def embulkVersion = "0.10.31"
 
 repositories {
     mavenCentral()
@@ -21,14 +21,14 @@ dependencies {
     compileOnly("org.embulk:embulk-spi:${embulkVersion}")
 
     implementation("org.embulk:embulk-util-config:0.3.4") {
-        exclude(group = "com.fasterxml.jackson.core", module = "jackson-annotations")
-        exclude(group = "com.fasterxml.jackson.core", module = "jackson-core")
-        exclude(group = "com.fasterxml.jackson.core", module = "jackson-databind")
-        exclude(group = "com.fasterxml.jackson.datatype", module = "jackson-datatype-jdk8")
-        exclude(group = "javax.validation", module = "validation-api")
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-annotations'
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-core'
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+        exclude group: 'com.fasterxml.jackson.datatype', module: 'jackson-datatype-jdk8'
+        exclude group: 'javax.validation', module: 'validation-api'
     }
     implementation("org.embulk:embulk-base-restclient:0.10.1") {
-        exclude(group = "org.embulk", module = "embulk-core")
+        exclude group: 'org.embulk', module: 'embulk-core'
     }
 
     implementation("org.embulk:embulk-util-retryhelper-jaxrs:0.9.0")
@@ -36,7 +36,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
-    testImplementation(kotlin("test"))
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
     testImplementation("org.embulk:embulk-api:${embulkVersion}")
     testImplementation("org.embulk:embulk-spi:${embulkVersion}")
     testImplementation("org.embulk:embulk-junit4:${embulkVersion}")
@@ -54,20 +54,17 @@ embulkPlugin {
 
 publishing {
     publications {
-        register("embulkPluginMaven", MavenPublication::class) {
-            from(components["java"])
-        }
-        register("maven", MavenPublication::class) {
-            groupId = project.group.toString()
-            artifactId = project.name
+        maven(MavenPublication) {
+            groupId project.group
+            artifactId project.name
 
-            from(components["java"])
+            from components.java
 
             pom {  // https://central.sonatype.org/pages/requirements.html
                 packaging = "jar"
 
                 name = project.name
-                description = project.description.toString()
+                description = project.description
                 url = "https://github.com/guchey/embulk-input-ahrefs"
 
                 licenses {
@@ -82,7 +79,7 @@ publishing {
 
                 developers {
                     developer {
-                        name = "Shingen Taguchi"
+                        name = "guchey"
                         email = "taguchi8shingen@gmail.com"
                     }
                 }
@@ -98,18 +95,16 @@ publishing {
     repositories {
         maven {
             name = "mavenCentral"
-            url = if (project.version.toString().endsWith("-SNAPSHOT")) {
-                uri("https://s01.oss.sonatype.org/content/repositories/snapshots")
-            } else {
-                uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2")
-            }
+            url = project.version.endsWith('-SNAPSHOT') ?
+                    'https://s01.oss.sonatype.org/content/repositories/snapshots' :
+                    'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2'
 
             // This setting assumes that "~/.gradle/gradle.properties" has "ossrhUsername" and "ossrhPassword".
             // Please put your Sonatype OSSRH username and password in "~/.gradle/gradle.properties".
             // https://central.sonatype.org/publish/publish-gradle/#credentials
             credentials {
-                username = if (project.hasProperty("ossrhUsername")) project.property("ossrhUsername").toString() else ""
-                password = if (project.hasProperty("ossrhPassword")) project.property("ossrhPassword").toString() else ""
+                username = project.hasProperty('ossrhUsername') ? project.ossrhUsername : ''
+                password = project.hasProperty('ossrhPassword') ? project.ossrhPassword : ''
             }
         }
     }
@@ -144,16 +139,31 @@ java {
     withJavadocJar()
 }
 
-tasks.register("generateEmbulkProperties") {
+tasks.register('generateEmbulkProperties') {
     doLast {
-        val embulkDir = file("${System.getProperty("user.home")}/.embulk")
+        def embulkDir = file("${System.getProperty('user.home')}/.embulk")
         embulkDir.mkdirs()
-        val propFile = file("${System.getProperty("user.home")}/.embulk/embulk.properties")
-        propFile.appendText("m2_repo=${System.getProperty("user.home")}/.m2/repository\n")
-        propFile.appendText("plugins.input.ahrefs=maven:${project.group}:ahrefs:${project.version}\n")
+        def propFile = file("${System.getProperty('user.home')}/.embulk/embulk.properties")
+        propFile.append("m2_repo=${System.getProperty('user.home')}/.m2/repository\n")
+        propFile.append("plugins.input.ahrefs=maven:${project.group}:ahrefs:${project.version}\n")
     }
 }
 
-tasks.withType<Sign>().configureEach {
-    onlyIf { !System.getenv().containsKey("CI") }
+tasks.withType(Sign).configureEach {
+    onlyIf { !System.getenv().containsKey('CI') }
+}
+
+gem {
+    authors = ["guchey"]
+    email = ["taguchi8shingen@gmail.com"]
+    // "description" of the Ruby Gem would come from "description" of the Gradle project.
+    summary = project.description
+    homepage = "https://github.com/guchey/embulk-input-ahrefs"
+    licenses = ["MIT"]  // See: https://guides.rubygems.org/specification-reference/#license=
+
+    from("LICENSE")  // If you want to include LICENSE file(s) in the Ruby Gem package.
+}
+
+gemPush {
+    host = "https://rubygems.org"
 }
