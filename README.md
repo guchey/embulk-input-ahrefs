@@ -48,7 +48,9 @@ All target have this configuration parameters.
 |---------|----------|---------------|----------------|
 | api_key | true     |               | Ahrefs API key |
 
-### Domain rating
+### Site Explorer
+
+#### Domain rating
 
 `resource: site_explorer_domain_rating`
 
@@ -58,7 +60,7 @@ All target have this configuration parameters.
 | date     | true     |               | A date to report metrics on in YYYY-MM-DD format. |
 | target   | true     |               | The target of the search: a domain or a URL.      |
 
-### Backlinks stats
+#### Backlinks stats
 
 `resource: site_explorer_backlink_stats`
 
@@ -69,7 +71,7 @@ All target have this configuration parameters.
 | date     | true     |               | A date to report metrics on in YYYY-MM-DD format.        |
 | target   | true     |               | The target of the search: a domain or a URL.             |
 
-### Metrics
+#### Metrics
 
 `resource: site_explorer_metrics`
 
@@ -82,7 +84,7 @@ All target have this configuration parameters.
 | date        | true     |               | The start date of the historical period in YYYY-MM-DD format.                                          |
 | target      | true     |               | The target of the search: a domain or a URL.                                                           |
 
-### Refdomains history
+#### Refdomains history
 
 `resource: site_explorer_ref_domains_history`
 
@@ -95,7 +97,7 @@ All target have this configuration parameters.
 | date_from        | true     |               | The start date of the historical period in YYYY-MM-DD format. |
 | target           | true     |               | The target of the search: a domain or a URL.                  |
 
-### Refdomains history
+#### Url rating history
 
 `resource: site_explorer_url_rating_history`
 
@@ -106,7 +108,22 @@ All target have this configuration parameters.
 | date_from        | true     |               | The start date of the historical period in YYYY-MM-DD format. |
 | target           | true     |               | The target of the search: a domain or a URL.                  |
 
-### Overview
+#### Metrics history
+
+`resource: site_explorer_metrics_history`
+
+| name             | required | default value | description                                                                                            |
+|------------------|----------|---------------|--------------------------------------------------------------------------------------------------------|
+| country          | false    |               | A two-letter country code.                                                                             |
+| date_to          | false    |               | The end date of the historical period in YYYY-MM-DD format.                                            |
+| history_grouping | false    | monthly       | The time interval used to group historical data.                                                       |
+| volume_mode      | false    | monthly       | The search volume calculation mode: monthly or average. It affects volume, traffic, and traffic value. |
+| date_from        | true     |               | The start date of the historical period in YYYY-MM-DD format.                                          |
+| target           | true     |               | The target of the search: a domain or a URL.                                                           |
+
+### Keywords Explorer
+
+#### Overview
 
 `resource: keywords_explorer_overview`
 
