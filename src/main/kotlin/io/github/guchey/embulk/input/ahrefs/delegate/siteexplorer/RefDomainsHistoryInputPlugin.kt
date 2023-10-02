@@ -61,9 +61,9 @@ class RefDomainsHistoryInputPlugin<T : RefDomainsHistoryInputPlugin.PluginTask> 
             "target" to task.target.get()
         )
         return Request.Builder()
-            .url(buildUrl("${task.resolveAhrefsUrl()}/v3/site-explorer/refdomains-history", queryParam))
+            .url(buildUrl("${resolveAhrefsUrl(task)}/v3/site-explorer/refdomains-history", queryParam))
             .addHeader("Accept", "application/json")
-            .addHeader("Authorization", task.resolveAuthHeader())
+            .addHeader("Authorization", resolveAuthHeader(task))
             .build()
     }
 

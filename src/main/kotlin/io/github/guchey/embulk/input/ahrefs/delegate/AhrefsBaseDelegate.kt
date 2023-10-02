@@ -60,14 +60,6 @@ abstract class AhrefsBaseDelegate<T : AhrefsBaseDelegate.PluginTask> : RestClien
         @get:ConfigDefault("{}")
         @get:Config("retry")
         val retry: RetryOption
-
-        fun resolveAuthHeader(): String {
-            return "Bearer ${this.apiKey.getOrNull() ?: System.getenv("EMBULK_INPUT_AHREFS_API_KEY")}"
-        }
-
-        fun resolveAhrefsUrl(): String {
-            return this.baseUrl.getOrNull() ?: System.getenv("EMBULK_INPUT_AHREFS_BASE_URL") ?: "https://api.ahrefs.com"
-        }
     }
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -162,5 +154,13 @@ abstract class AhrefsBaseDelegate<T : AhrefsBaseDelegate.PluginTask> : RestClien
             throw ConfigException("Field '${fieldName}' is required but not set");
         }
         return field.get()
+    }
+
+    fun resolveAuthHeader(task: T): String {
+        return "Bearer ${task.apiKey.getOrNull() ?: System.getenv("EMBULK_INPUT_AHREFS_API_KEY")}"
+    }
+
+    fun resolveAhrefsUrl(task: T): String {
+        return task.baseUrl.getOrNull() ?: System.getenv("EMBULK_INPUT_AHREFS_BASE_URL") ?: "https://api.ahrefs.com"
     }
 }

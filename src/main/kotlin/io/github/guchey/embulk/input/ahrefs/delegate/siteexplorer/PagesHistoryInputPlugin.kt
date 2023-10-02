@@ -63,9 +63,9 @@ class PagesHistoryInputPlugin<T : PagesHistoryInputPlugin.PluginTask> : AhrefsBa
             "target" to task.target.get()
         )
         return Request.Builder()
-            .url(buildUrl("${task.resolveAhrefsUrl()}/v3/site-explorer/pages-history", queryParam))
+            .url(buildUrl("${resolveAhrefsUrl(task)}/v3/site-explorer/pages-history", queryParam))
             .addHeader("Accept", "application/json")
-            .addHeader("Authorization", task.resolveAuthHeader())
+            .addHeader("Authorization", resolveAuthHeader(task))
             .build()
     }
 

@@ -105,9 +105,9 @@ class OverviewInputPlugin<T : OverviewInputPlugin.PluginTask> : AhrefsBaseDelega
             "select" to task.select.get()
         )
         return Request.Builder()
-            .url(buildUrl("${task.resolveAhrefsUrl()}/v3/keywords-explorer/overview", queryParam))
+            .url(buildUrl("${resolveAhrefsUrl(task)}/v3/keywords-explorer/overview", queryParam))
             .addHeader("Accept", "application/json")
-            .addHeader("Authorization", task.resolveAuthHeader())
+            .addHeader("Authorization", resolveAuthHeader(task))
             .build()
     }
 

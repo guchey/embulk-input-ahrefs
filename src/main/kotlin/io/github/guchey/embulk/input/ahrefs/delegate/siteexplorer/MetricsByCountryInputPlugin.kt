@@ -66,9 +66,9 @@ class MetricsByCountryInputPlugin<T : MetricsByCountryInputPlugin.PluginTask> : 
             "target" to task.target.get()
         )
         return Request.Builder()
-            .url(buildUrl("${task.resolveAhrefsUrl()}/v3/site-explorer/metrics-by-country", queryParam))
+            .url(buildUrl("${resolveAhrefsUrl(task)}/v3/site-explorer/metrics-by-country", queryParam))
             .addHeader("Accept", "application/json")
-            .addHeader("Authorization", task.resolveAuthHeader())
+            .addHeader("Authorization", resolveAuthHeader(task))
             .build()
     }
 

@@ -51,9 +51,9 @@ class PagesByTrafficInputPlugin<T : PagesByTrafficInputPlugin.PluginTask> : Ahre
             "target" to task.target.get()
         )
         return Request.Builder()
-            .url(buildUrl("${task.resolveAhrefsUrl()}/v3/site-explorer/pages-by-traffic", queryParam))
+            .url(buildUrl("${resolveAhrefsUrl(task)}/v3/site-explorer/pages-by-traffic", queryParam))
             .addHeader("Accept", "application/json")
-            .addHeader("Authorization", task.resolveAuthHeader())
+            .addHeader("Authorization", resolveAuthHeader(task))
             .build()
     }
 

@@ -57,9 +57,9 @@ class MetricsInputPlugin<T : MetricsInputPlugin.PluginTask> : AhrefsBaseDelegate
             "target" to task.target.get()
         )
         return Request.Builder()
-            .url(buildUrl("${task.resolveAhrefsUrl()}/v3/site-explorer/metrics",queryParam))
+            .url(buildUrl("${resolveAhrefsUrl(task)}/v3/site-explorer/metrics",queryParam))
             .addHeader("Accept", "application/json")
-            .addHeader("Authorization", task.resolveAuthHeader())
+            .addHeader("Authorization", resolveAuthHeader(task))
             .build()
     }
 
