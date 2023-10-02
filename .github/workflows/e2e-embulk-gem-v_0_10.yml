@@ -10,7 +10,6 @@ jobs:
         embulk_version:
           - 0.11.1
           - 0.10.50
-          - 0.9.25
         config:
           - e2e/site-explorer/backlink_stats_to_stdout.yml
           - e2e/site-explorer/domain_rating_to_stdout.yml
@@ -45,6 +44,9 @@ jobs:
           java-version: 8
           distribution: "zulu"
 
+      - name: Set up jruby
+        run: curl -o /home/runner/jruby-complete-${JRUBY_VERSION}.jar -L https://repo1.maven.org/maven2/org/jruby/jruby-complete/${JRUBY_VERSION}/jruby-complete-${JRUBY_VERSION}.jar
+
       - name: Set up embulk
         run: |
           curl -o ./embulk -L https://github.com/embulk/embulk/releases/download/v${{ matrix.embulk_version }}/embulk-${{ matrix.embulk_version }}.jar
@@ -62,6 +64,11 @@ jobs:
 
       - run: ./gradlew dependencies
         if: steps.gradle-cache.outputs.cache-hit != 'true'
+
+      - name: Setup Embulk Properties
+        run: |
+          ./gradlew generateEmbulkProperties
+          echo "jruby=file:///home/runner/jruby-complete-${JRUBY_VERSION}.jar" >> ~/.embulk/embulk.properties
 
       - name: gem
         run: ./gradlew gem
