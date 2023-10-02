@@ -58,7 +58,7 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', 'settings.gradle.kts', 'build.gradle.kts', 'gradle.properties') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', 'settings.gradle.kts', 'build.gradle', 'gradle.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
 
@@ -68,7 +68,7 @@ jobs:
       - name: publishToMavenLocal
         run: ./gradlew publishToMavenLocal
 
-      - run: cp build/publications/embulkPluginMaven/pom-default.xml pom.xml
+      - run: cp build/publications/maven/pom-default.xml pom.xml
 
       - uses: actions/cache@v3
         id: m2-cache
@@ -92,7 +92,7 @@ jobs:
           ./embulk gem install embulk -v ${{ matrix.embulk_version }}
           ./embulk gem install msgpack
 
-      - name: publishEmbulkPluginMavenPublicationToMavenLocal
-        run: ./gradlew publishEmbulkPluginMavenPublicationToMavenLocal
+      - name: publishMavenPublicationToMavenLocal
+        run: ./gradlew publishMavenPublicationToMavenLocal
 
       - run: ./embulk preview ${{ matrix.config }}
