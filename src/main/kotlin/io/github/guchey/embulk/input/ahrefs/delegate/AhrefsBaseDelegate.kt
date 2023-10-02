@@ -1,6 +1,5 @@
 package io.github.guchey.embulk.input.ahrefs.delegate
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
@@ -62,13 +61,11 @@ abstract class AhrefsBaseDelegate<T : AhrefsBaseDelegate.PluginTask> : RestClien
         @get:Config("retry")
         val retry: RetryOption
 
-        @JsonIgnore
-        fun getAuthHeader(): String {
+        fun resolveAuthHeader(): String {
             return "Bearer ${this.apiKey.getOrNull() ?: System.getenv("EMBULK_INPUT_AHREFS_API_KEY")}"
         }
 
-        @JsonIgnore
-        fun getAhrefsUrl(): String {
+        fun resolveAhrefsUrl(): String {
             return this.baseUrl.getOrNull() ?: System.getenv("EMBULK_INPUT_AHREFS_BASE_URL") ?: "https://api.ahrefs.com"
         }
     }

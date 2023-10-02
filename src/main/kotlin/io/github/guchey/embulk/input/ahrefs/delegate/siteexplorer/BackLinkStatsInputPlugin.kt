@@ -13,7 +13,6 @@ import org.embulk.spi.type.Types
 import org.embulk.util.config.Config
 import org.embulk.util.config.ConfigDefault
 import java.util.*
-import kotlin.jvm.optionals.getOrNull
 
 
 class BackLinkStatsInputPlugin<T : BackLinkStatsInputPlugin.PluginTask> : AhrefsBaseDelegate<T>() {
@@ -50,9 +49,9 @@ class BackLinkStatsInputPlugin<T : BackLinkStatsInputPlugin.PluginTask> : Ahrefs
             "target" to task.target.get()
         )
         return Request.Builder()
-            .url(buildUrl("${task.getAhrefsUrl()}/v3/site-explorer/backlinks-stats", queryParam))
+            .url(buildUrl("${task.resolveAhrefsUrl()}/v3/site-explorer/backlinks-stats", queryParam))
             .addHeader("Accept", "application/json")
-            .addHeader("Authorization", task.getAuthHeader())
+            .addHeader("Authorization", task.resolveAuthHeader())
             .build()
     }
 

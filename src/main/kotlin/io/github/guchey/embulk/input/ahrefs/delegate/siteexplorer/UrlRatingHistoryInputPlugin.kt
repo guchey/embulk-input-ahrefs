@@ -3,8 +3,6 @@ package io.github.guchey.embulk.input.ahrefs.delegate.siteexplorer
 import com.fasterxml.jackson.databind.JsonNode
 import io.github.guchey.embulk.input.ahrefs.delegate.AhrefsBaseDelegate
 import io.github.guchey.embulk.input.ahrefs.delegate.schema.HistoryGrouping
-import io.github.guchey.embulk.input.ahrefs.delegate.schema.Mode
-import io.github.guchey.embulk.input.ahrefs.delegate.schema.Protocol
 import io.github.guchey.embulk.input.ahrefs.delegate.schema.getNameOrNull
 import okhttp3.Request
 import org.embulk.base.restclient.ServiceResponseMapper
@@ -51,9 +49,9 @@ class UrlRatingHistoryInputPlugin<T : UrlRatingHistoryInputPlugin.PluginTask> : 
             "target" to task.target.get()
         )
         return Request.Builder()
-            .url(buildUrl("${task.getAhrefsUrl()}/v3/site-explorer/url-rating-history", queryParam))
+            .url(buildUrl("${task.resolveAhrefsUrl()}/v3/site-explorer/url-rating-history", queryParam))
             .addHeader("Accept", "application/json")
-            .addHeader("Authorization", task.getAuthHeader())
+            .addHeader("Authorization", task.resolveAuthHeader())
             .build()
     }
 
