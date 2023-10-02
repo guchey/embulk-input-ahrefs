@@ -2,6 +2,7 @@ package io.github.guchey.embulk.input.ahrefs.delegate.schema
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import java.util.*
+import kotlin.jvm.optionals.getOrNull
 
 enum class Mode {
     EXACT,
@@ -17,3 +18,5 @@ enum class Mode {
         }
     }
 }
+
+fun Optional<Mode>.getNameOrNull(): String? = this.getOrNull()?.name?.lowercase(Locale.getDefault())
