@@ -68,7 +68,7 @@ jobs:
       - name: publishToMavenLocal
         run: ./gradlew publishToMavenLocal
 
-      - run: cp build/publications/embulkPluginMaven/pom-default.xml pom.xml
+      - run: cp build/publications/maven/pom-default.xml pom.xml
 
       - uses: actions/cache@v3
         id: m2-cache
