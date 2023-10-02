@@ -35,7 +35,7 @@ mvn org.apache.maven.plugins:maven-dependency-plugin:3.1.2:get -Dartifact=io.git
 Specify plugin in embulk.properties.
 
 ```
-plugins.input.ahrefs=maven:io.github.guchey.embulk.input.ahrefs:ahrefs:0.1.0-SNAPSHOT
+plugins.input.ahrefs=maven:io.github.guchey.embulk.input.ahrefs:ahrefs:0.1.1
 ```
 
 
