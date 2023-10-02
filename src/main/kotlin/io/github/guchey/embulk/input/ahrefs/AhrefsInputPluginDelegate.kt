@@ -13,9 +13,14 @@ import java.util.*
 
 
 class AhrefsInputPluginDelegate : DispatchingRestClientInputPluginDelegate<AhrefsInputPluginDelegate.PluginTask>() {
-    interface PluginTask : AhrefsBaseDelegate.PluginTask, OverviewInputPlugin.PluginTask,
-        BackLinkStatsInputPlugin.PluginTask, DomainRatingInputPlugin.PluginTask, MetricsInputPlugin.PluginTask,
-        RefDomainsHistoryInputPlugin.PluginTask, UrlRatingHistoryInputPlugin.PluginTask {
+    interface PluginTask : AhrefsBaseDelegate.PluginTask,
+        OverviewInputPlugin.PluginTask,
+        BackLinkStatsInputPlugin.PluginTask,
+        DomainRatingInputPlugin.PluginTask,
+        MetricsInputPlugin.PluginTask,
+        RefDomainsHistoryInputPlugin.PluginTask,
+        UrlRatingHistoryInputPlugin.PluginTask,
+        MetricsHistoryPlugin.PluginTask {
 
         @get:Config("resource")
         val resource: Resource
@@ -26,6 +31,7 @@ class AhrefsInputPluginDelegate : DispatchingRestClientInputPluginDelegate<Ahref
             SITE_EXPLORER_METRICS(MetricsInputPlugin()),
             SITE_EXPLORER_REF_DOMAINS_HISTORY(RefDomainsHistoryInputPlugin()),
             SITE_EXPLORER_URL_RATING_HISTORY(UrlRatingHistoryInputPlugin()),
+            SITE_EXPLORER_METRICS_HISTORY(MetricsHistoryPlugin()),
             KEYWORD_EXPLORER_OVERVIEW(OverviewInputPlugin());
 
             companion object {
