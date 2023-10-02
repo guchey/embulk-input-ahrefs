@@ -69,7 +69,7 @@ class MetricsHistoryPlugin<T : MetricsHistoryPlugin.PluginTask> : AhrefsBaseDele
             "target" to task.target.get()
         )
         return Request.Builder()
-            .url(buildUrl("${task.baseUrl}/v3/site-explorer/metrics", queryParam))
+            .url(buildUrl("${task.baseUrl}/v3/site-explorer/metrics-history", queryParam))
             .addHeader("Accept", "application/json")
             .addHeader("Authorization", "Bearer ${task.apiKey}")
             .build()
