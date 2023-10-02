@@ -81,7 +81,7 @@ All target have this configuration parameters.
 | mode        | false    | subdomains    | The scope of the search based on the target you entered.                                               |
 | protocol    | false    | both          | The protocol of your target.                                                                           |
 | volume_mode | false    | monthly       | The search volume calculation mode: monthly or average. It affects volume, traffic, and traffic value. |
-| date        | true     |               | The start date of the historical period in YYYY-MM-DD format.                                          |
+| date        | true     |               | A date to report metrics on in YYYY-MM-DD format.                                                      |
 | target      | true     |               | The target of the search: a domain or a URL.                                                           |
 
 #### Refdomains history
@@ -120,6 +120,61 @@ All target have this configuration parameters.
 | volume_mode      | false    | monthly       | The search volume calculation mode: monthly or average. It affects volume, traffic, and traffic value. |
 | date_from        | true     |               | The start date of the historical period in YYYY-MM-DD format.                                          |
 | target           | true     |               | The target of the search: a domain or a URL.                                                           |
+
+#### Pages history
+
+`resource: site_explorer_pages_history`
+
+| name             | required | default value | description                                                   |
+|------------------|----------|---------------|---------------------------------------------------------------|
+| country          | false    |               | A two-letter country code.                                    |
+| date_to          | false    |               | The end date of the historical period in YYYY-MM-DD format.   |
+| history_grouping | false    | monthly       | The time interval used to group historical data.              |
+| mode             | false    | subdomains    | The scope of the search based on the target you entered.      |
+| protocol         | false    | both          | The protocol of your target.　                                 |
+| date_from        | true     |               | The start date of the historical period in YYYY-MM-DD format. |
+| target           | true     |               | The target of the search: a domain or a URL.                  |
+
+#### Keywords history
+
+`resource: site_explorer_keywords_history`
+
+| name             | required | default value | description                                                   |
+|------------------|----------|---------------|---------------------------------------------------------------|
+| country          | false    |               | A two-letter country code.                                    |
+| date_to          | false    |               | The end date of the historical period in YYYY-MM-DD format.   |
+| history_grouping | false    | monthly       | The time interval used to group historical data.              |
+| mode             | false    | subdomains    | The scope of the search based on the target you entered.      |
+| protocol         | false    | both          | The protocol of your target.　                                 |
+| date_from        | true     |               | The start date of the historical period in YYYY-MM-DD format. |
+| target           | true     |               | The target of the search: a domain or a URL.                  |
+
+#### Metrics by country
+
+`resource: site_explorer_metrics_by_country`
+
+| name        | required | default value | description                                                                                            |
+|-------------|----------|---------------|--------------------------------------------------------------------------------------------------------|
+| limit       | false    | 1000          | The number of results to return.                                                                       |
+| mode        | false    | subdomains    | The scope of the search based on the target you entered.                                               |
+| offset      | false    | 0             | Returned results will start from the row indicated in the offset value.                                |
+| protocol    | false    | both          | The protocol of your target.　                                                                          |
+| volume_mode | false    | monthly       | The search volume calculation mode: monthly or average. It affects volume, traffic, and traffic value. |
+| date        | true     |               | A date to report metrics on in YYYY-MM-DD format.                                                      |
+| target      | true     |               | The target of the search: a domain or a URL.                                                           |
+
+#### Pages by traffic
+
+`resource: site_explorer_pages_by_traffic`
+
+| name        | required | default value | description                                                                                            |
+|-------------|----------|---------------|--------------------------------------------------------------------------------------------------------|
+| country     | false    |               | A two-letter country code.                                                                             |
+| mode        | false    | subdomains    | The scope of the search based on the target you entered.                                               |
+| protocol    | false    | both          | The protocol of your target.　                                                                          |
+| volume_mode | false    | monthly       | The search volume calculation mode: monthly or average. It affects volume, traffic, and traffic value. |
+| target      | true     |               | The target of the search: a domain or a URL.                                                           |
+
 
 ### Keywords Explorer
 
