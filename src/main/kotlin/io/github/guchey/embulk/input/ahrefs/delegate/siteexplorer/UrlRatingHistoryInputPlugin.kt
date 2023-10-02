@@ -5,6 +5,7 @@ import io.github.guchey.embulk.input.ahrefs.delegate.AhrefsBaseDelegate
 import io.github.guchey.embulk.input.ahrefs.delegate.schema.HistoryGrouping
 import io.github.guchey.embulk.input.ahrefs.delegate.schema.Mode
 import io.github.guchey.embulk.input.ahrefs.delegate.schema.Protocol
+import io.github.guchey.embulk.input.ahrefs.delegate.schema.getNameOrNull
 import okhttp3.Request
 import org.embulk.base.restclient.ServiceResponseMapper
 import org.embulk.base.restclient.jackson.JacksonServiceResponseMapper
@@ -45,7 +46,7 @@ class UrlRatingHistoryInputPlugin<T : UrlRatingHistoryInputPlugin.PluginTask> : 
         val queryParam = mapOf(
             "output" to "json",
             "date_to" to task.dateTo.getOrNull(),
-            "history_grouping" to task.historyGrouping.getOrNull()?.name?.lowercase(Locale.getDefault()),
+            "history_grouping" to task.historyGrouping.getNameOrNull(),
             "date_from" to task.dateFrom.get(),
             "target" to task.target.get()
         )

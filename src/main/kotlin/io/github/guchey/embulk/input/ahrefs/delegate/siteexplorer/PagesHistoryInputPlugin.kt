@@ -2,10 +2,7 @@ package io.github.guchey.embulk.input.ahrefs.delegate.siteexplorer
 
 import com.fasterxml.jackson.databind.JsonNode
 import io.github.guchey.embulk.input.ahrefs.delegate.AhrefsBaseDelegate
-import io.github.guchey.embulk.input.ahrefs.delegate.schema.Country
-import io.github.guchey.embulk.input.ahrefs.delegate.schema.HistoryGrouping
-import io.github.guchey.embulk.input.ahrefs.delegate.schema.Mode
-import io.github.guchey.embulk.input.ahrefs.delegate.schema.Protocol
+import io.github.guchey.embulk.input.ahrefs.delegate.schema.*
 import okhttp3.Request
 import org.embulk.base.restclient.ServiceResponseMapper
 import org.embulk.base.restclient.jackson.JacksonServiceResponseMapper
@@ -57,11 +54,11 @@ class PagesHistoryInputPlugin<T : PagesHistoryInputPlugin.PluginTask> : AhrefsBa
     override fun buildRequest(task: T): Request {
         val queryParam = mapOf(
             "output" to "json",
-            "country" to task.country.getOrNull()?.name?.lowercase(Locale.getDefault()),
+            "country" to task.country.getNameOrNull(),
             "date_to" to task.dateTo.getOrNull(),
-            "history_grouping" to task.historyGrouping.getOrNull()?.name?.lowercase(Locale.getDefault()),
-            "mode" to task.mode.getOrNull()?.name?.lowercase(Locale.getDefault()),
-            "protocol" to task.protocol.getOrNull()?.name?.lowercase(Locale.getDefault()),
+            "history_grouping" to task.historyGrouping.getNameOrNull(),
+            "mode" to task.mode.getNameOrNull(),
+            "protocol" to task.protocol.getNameOrNull(),
             "date_from" to task.dateFrom.get(),
             "target" to task.target.get()
         )
