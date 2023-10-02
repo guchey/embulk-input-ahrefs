@@ -63,9 +63,9 @@ class KeywordsHistoryInputPlugin<T : KeywordsHistoryInputPlugin.PluginTask> : Ah
             "target" to task.target.get()
         )
         return Request.Builder()
-            .url(buildUrl("${task.baseUrl}/v3/site-explorer/keywords-history", queryParam))
+            .url(buildUrl("${task.getAhrefsUrl()}/v3/site-explorer/keywords-history", queryParam))
             .addHeader("Accept", "application/json")
-            .addHeader("Authorization", "Bearer ${task.apiKey}")
+            .addHeader("Authorization", task.getAuthHeader())
             .build()
     }
 

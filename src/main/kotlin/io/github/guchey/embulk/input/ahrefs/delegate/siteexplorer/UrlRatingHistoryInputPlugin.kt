@@ -51,9 +51,9 @@ class UrlRatingHistoryInputPlugin<T : UrlRatingHistoryInputPlugin.PluginTask> : 
             "target" to task.target.get()
         )
         return Request.Builder()
-            .url(buildUrl("${task.baseUrl}/v3/site-explorer/url-rating-history", queryParam))
+            .url(buildUrl("${task.getAhrefsUrl()}/v3/site-explorer/url-rating-history", queryParam))
             .addHeader("Accept", "application/json")
-            .addHeader("Authorization", "Bearer ${task.apiKey}")
+            .addHeader("Authorization", task.getAuthHeader())
             .build()
     }
 

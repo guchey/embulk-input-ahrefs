@@ -26,6 +26,8 @@ jobs:
 
     env:
       JRUBY_VERSION: 9.4.3.0
+      EMBULK_INPUT_AHREFS_BASE_URL: http://0.0.0.0:4010
+      EMBULK_INPUT_AHREFS_API_KEY: dummy
 
     services:
       prism:

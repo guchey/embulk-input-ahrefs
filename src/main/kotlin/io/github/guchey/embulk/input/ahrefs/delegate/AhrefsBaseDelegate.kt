@@ -25,17 +25,19 @@ import org.embulk.util.config.ConfigDefault
 import org.embulk.util.config.Task
 import org.slf4j.LoggerFactory
 import java.util.*
+import kotlin.jvm.optionals.getOrNull
 
 
 abstract class AhrefsBaseDelegate<T : AhrefsBaseDelegate.PluginTask> : RestClientInputPluginDelegate<T> {
     interface PluginTask : RestClientInputTaskBase {
 
-        @get:ConfigDefault("\"https://api.ahrefs.com\"")
+        @get:ConfigDefault("null")
         @get:Config("base_url")
-        val baseUrl: String
+        val baseUrl: Optional<String>
 
+        @get:ConfigDefault("null")
         @get:Config("api_key")
-        val apiKey: String
+        val apiKey: Optional<String>
 
         interface RetryOption : Task {
             @get:ConfigDefault("\"true\"")
@@ -58,6 +60,14 @@ abstract class AhrefsBaseDelegate<T : AhrefsBaseDelegate.PluginTask> : RestClien
         @get:ConfigDefault("{}")
         @get:Config("retry")
         val retry: RetryOption
+
+        fun getAuthHeader(): String {
+            return "Bearer ${this.apiKey.getOrNull() ?: System.getenv("EMBULK_INPUT_AHREFS_API_KEY")}"
+        }
+
+        fun getAhrefsUrl(): String {
+            return this.baseUrl.getOrNull() ?: System.getenv("EMBULK_INPUT_AHREFS_BASE_URL") ?: "https://api.ahrefs.com"
+        }
     }
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -70,6 +80,9 @@ abstract class AhrefsBaseDelegate<T : AhrefsBaseDelegate.PluginTask> : RestClien
     }
 
     override fun validateInputTask(task: T) {
+        if (!task.apiKey.isPresent && !System.getenv("EMBULK_INPUT_AHREFS_API_KEY").isNullOrEmpty()) {
+            throw ConfigException("Either Field 'apiKey' or Environment variables 'EMBULK_INPUT_AHREFS_API_KEY' is required but not set");
+        }
         task.validate()
     }
 

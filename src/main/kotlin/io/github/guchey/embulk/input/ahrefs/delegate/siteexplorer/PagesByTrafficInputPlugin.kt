@@ -52,9 +52,9 @@ class PagesByTrafficInputPlugin<T : PagesByTrafficInputPlugin.PluginTask> : Ahre
             "target" to task.target.get()
         )
         return Request.Builder()
-            .url(buildUrl("${task.baseUrl}/v3/site-explorer/pages-by-traffic", queryParam))
+            .url(buildUrl("${task.getAhrefsUrl()}/v3/site-explorer/pages-by-traffic", queryParam))
             .addHeader("Accept", "application/json")
-            .addHeader("Authorization", "Bearer ${task.apiKey}")
+            .addHeader("Authorization", task.getAuthHeader())
             .build()
     }
 
