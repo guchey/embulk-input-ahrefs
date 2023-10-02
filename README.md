@@ -11,7 +11,7 @@ This plugin uses Ahrefs REST API.
 
 ## Overview
 
-Required Embulk version >= 0.11.0.
+Required Embulk version >= 0.9.25
 
 - Plugin type: input
 - Resume supported: no
@@ -20,10 +20,16 @@ Required Embulk version >= 0.11.0.
 
 ## Install
 
+Use gem to get the plugin.
+
+```
+embulk gem install embulk-input-ahrefs
+```
+
 Use maven-dependency-plugin to get the plugin.
 
 ```
-mvn org.apache.maven.plugins:maven-dependency-plugin:3.1.2:get -Dartifact=io.github.guchey.embulk.input.ahrefs:embulk-input-ahrefs:0.1.0-ALPHA
+mvn org.apache.maven.plugins:maven-dependency-plugin:3.1.2:get -Dartifact=io.github.guchey.embulk.input.ahrefs:embulk-input-ahrefs:0.1.1
 ```
 
 Specify plugin in embulk.properties.
