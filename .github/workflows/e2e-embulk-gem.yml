@@ -1,4 +1,4 @@
-name: Run e2e test Embulk gem
+name: embulk <= v0.9
 
 on: push
 

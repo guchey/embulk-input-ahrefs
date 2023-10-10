@@ -1,4 +1,4 @@
-name: Run e2e test Embulk v0.10
+name: embulk >= v0.10 maven
 
 on: push
 
