@@ -40,7 +40,7 @@ class AhrefsInputPluginDelegate : DispatchingRestClientInputPluginDelegate<Ahref
             SITE_EXPLORER_KEYWORDS_HISTORY(KeywordsHistoryInputPlugin()),
             SITE_EXPLORER_METRICS_BY_COUNTRY(MetricsByCountryInputPlugin()),
             SITE_EXPLORER_PAGES_BY_TRAFFIC(PagesByTrafficInputPlugin()),
-            KEYWORD_EXPLORER_OVERVIEW(OverviewInputPlugin());
+            KEYWORDS_EXPLORER_OVERVIEW(OverviewInputPlugin());
 
             companion object {
                 @JvmStatic
