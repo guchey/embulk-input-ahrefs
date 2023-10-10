@@ -1,3 +1,7 @@
+![gem v0.9](https://github.com/guchey/embulk-input-ahrefs/actions/workflows/e2e-embulk-gem.yml/badge.svg?branch=main)
+![gem v0.10](https://github.com/guchey/embulk-input-ahrefs/actions/workflows/e2e-embulk-gem-v_0_10.yml/badge.svg?branch=main)
+![maven v0.10](https://github.com/guchey/embulk-input-ahrefs/actions/workflows/e2e-embulk-maven-v_0_10.yml/badge.svg?branch=main)
+
 # Ahrefs input plugin for Embulk
 
 embulk-input-ahrefs is the gem preparing Embulk input plugins
