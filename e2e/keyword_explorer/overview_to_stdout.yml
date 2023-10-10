@@ -1,6 +1,6 @@
 in:
   type: ahrefs
-  resource: keyword_explorer_overview
+  resource: keywords_explorer_overview
   country: us
   keywords: "ahrefs"
   select: keyword,volume,traffic_potential,difficulty
