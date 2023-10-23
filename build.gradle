@@ -33,7 +33,7 @@ dependencies {
 
     implementation("org.embulk:embulk-util-retryhelper-jaxrs:0.9.0")
 
-    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
