@@ -52,7 +52,7 @@ jobs:
           curl -o ./embulk -L https://github.com/embulk/embulk/releases/download/v${{ matrix.embulk_version }}/embulk-${{ matrix.embulk_version }}.jar
           chmod +x ./embulk
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v5
         id: gradle-cache
         with:
           path: |
